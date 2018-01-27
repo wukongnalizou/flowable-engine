@@ -8,7 +8,7 @@
     <artifactId>flowable-cmmn-engine</artifactId>
 
     <parent>
-        <groupId>org.flowable</groupId>
+        <groupId>com.proper.enterprise.platform</groupId>
         <artifactId>flowable-root</artifactId>
         <relativePath>../..</relativePath>
         <version>6.2.1-SNAPSHOT</version>
@@ -16,51 +16,51 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-cmmn-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-cmmn-image-generator</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-cmmn-converter</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-engine-common-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-engine-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-idm-engine</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-variable-service</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-task-service</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-job-service</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-form-model</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-form-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-content-api</artifactId>
         </dependency>
         <dependency>
@@ -120,7 +120,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-dmn-api</artifactId>
         </dependency>
     </dependencies>

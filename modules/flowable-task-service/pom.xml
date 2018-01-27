@@ -7,7 +7,7 @@
     <artifactId>flowable-task-service</artifactId>
 
     <parent>
-        <groupId>org.flowable</groupId>
+        <groupId>com.proper.enterprise.platform</groupId>
         <artifactId>flowable-root</artifactId>
         <relativePath>../..</relativePath>
         <version>6.2.1-SNAPSHOT</version>
@@ -15,27 +15,27 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-task-service-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-engine-common-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-engine-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-variable-service</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-identitylink-service</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-idm-api</artifactId>
         </dependency>
         <dependency>

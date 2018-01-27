@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<parent>
-		<groupId>org.flowable</groupId>
+		<groupId>com.proper.enterprise.platform</groupId>
 		<artifactId>flowable-root</artifactId>
 		<relativePath>../..</relativePath>
 		<version>6.2.1-SNAPSHOT</version>
@@ -90,12 +90,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.flowable</groupId>
+			<groupId>com.proper.enterprise.platform</groupId>
 			<artifactId>flowable-common-rest</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>org.flowable</groupId>
+			<groupId>com.proper.enterprise.platform</groupId>
 			<artifactId>flowable-content-engine</artifactId>
 		</dependency>
 

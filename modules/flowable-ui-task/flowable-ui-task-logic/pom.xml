@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>flowable-ui-task-logic</artifactId>
 	<parent>
-		<groupId>org.flowable</groupId>
+		<groupId>com.proper.enterprise.platform</groupId>
     	<artifactId>flowable-ui-task</artifactId>
     	<version>6.2.1-SNAPSHOT</version>
 	</parent>
@@ -15,63 +15,63 @@
 	
 		<!-- Flowable -->
 		<dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-engine</artifactId>
         </dependency>
 		<dependency>
-			<groupId>org.flowable</groupId>
+			<groupId>com.proper.enterprise.platform</groupId>
 			<artifactId>flowable-bpmn-model</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.flowable</groupId>
+			<groupId>com.proper.enterprise.platform</groupId>
 			<artifactId>flowable-bpmn-converter</artifactId>
 		</dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-bpmn-layout</artifactId>
         </dependency>        
 		<dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-process-validation</artifactId>
         </dependency>
         <dependency>
-        	<groupId>org.flowable</groupId>
+        	<groupId>com.proper.enterprise.platform</groupId>
         	<artifactId>flowable-json-converter</artifactId>
         </dependency>
         <dependency>
-        	<groupId>org.flowable</groupId>
+        	<groupId>com.proper.enterprise.platform</groupId>
         	<artifactId>flowable-dmn-xml-converter</artifactId>
         </dependency>
         <dependency>
-       	 	<groupId>org.flowable</groupId>
+       	 	<groupId>com.proper.enterprise.platform</groupId>
         	<artifactId>flowable-dmn-json-converter</artifactId>
       	</dependency>
       	<dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-form-engine</artifactId>
         </dependency>
 		<dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-form-model</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-form-json-converter</artifactId>
         </dependency>
         <dependency>
-        	<groupId>org.flowable</groupId>
+        	<groupId>com.proper.enterprise.platform</groupId>
         	<artifactId>flowable-spring</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-content-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-content-engine</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.flowable</groupId>
+            <groupId>com.proper.enterprise.platform</groupId>
             <artifactId>flowable-ui-common</artifactId>
         </dependency>
 

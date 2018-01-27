@@ -7,7 +7,7 @@
   <packaging>war</packaging>
 
   <parent>
-    <groupId>org.flowable</groupId>
+    <groupId>com.proper.enterprise.platform</groupId>
     <artifactId>flowable-root</artifactId>
     <relativePath>../..</relativePath>
     <version>6.2.1-SNAPSHOT</version>
@@ -519,51 +519,51 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.flowable</groupId>
+      <groupId>com.proper.enterprise.platform</groupId>
       <artifactId>flowable-engine</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.flowable</groupId>
+      <groupId>com.proper.enterprise.platform</groupId>
       <artifactId>flowable-spring</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.flowable</groupId>
+      <groupId>com.proper.enterprise.platform</groupId>
       <artifactId>flowable-rest</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.flowable</groupId>
+      <groupId>com.proper.enterprise.platform</groupId>
       <artifactId>flowable-json-converter</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.flowable</groupId>
+      <groupId>com.proper.enterprise.platform</groupId>
       <artifactId>flowable-dmn-rest</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.flowable</groupId>
+      <groupId>com.proper.enterprise.platform</groupId>
       <artifactId>flowable-dmn-spring-configurator</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.flowable</groupId>
+      <groupId>com.proper.enterprise.platform</groupId>
       <artifactId>flowable-form-rest</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.flowable</groupId>
+      <groupId>com.proper.enterprise.platform</groupId>
       <artifactId>flowable-form-spring-configurator</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.flowable</groupId>
+      <groupId>com.proper.enterprise.platform</groupId>
       <artifactId>flowable-content-rest</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.flowable</groupId>
+      <groupId>com.proper.enterprise.platform</groupId>
       <artifactId>flowable-content-spring-configurator</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.flowable</groupId>
+      <groupId>com.proper.enterprise.platform</groupId>
       <artifactId>flowable-groovy-script-static-engine</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.flowable</groupId>
+      <groupId>com.proper.enterprise.platform</groupId>
       <artifactId>flowable-http</artifactId>
     </dependency>
 

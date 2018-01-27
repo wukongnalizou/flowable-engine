@@ -4,7 +4,7 @@
 
 
 	<parent>
-		<groupId>org.flowable</groupId>
+		<groupId>com.proper.enterprise.platform</groupId>
 		<artifactId>flowable-spring-boot-starters</artifactId>
 		<version>6.2.1-SNAPSHOT</version>
 	</parent>
@@ -23,11 +23,11 @@
 
 		<!-- common -->
 		<dependency>
-			<groupId>org.flowable</groupId>
+			<groupId>com.proper.enterprise.platform</groupId>
 			<artifactId>flowable-engine</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.flowable</groupId>
+			<groupId>com.proper.enterprise.platform</groupId>
 			<artifactId>flowable-spring</artifactId>
 
 		</dependency>
@@ -38,7 +38,7 @@
 
 		<!-- rest api -->
 		<dependency>
-			<groupId>org.flowable</groupId>
+			<groupId>com.proper.enterprise.platform</groupId>
 			<artifactId>flowable-rest</artifactId>
 			<exclusions>
 				<exclusion>
@@ -49,7 +49,7 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.flowable</groupId>
+			<groupId>com.proper.enterprise.platform</groupId>
 			<artifactId>flowable-common-rest</artifactId>
 			<optional>true</optional>
 			<exclusions>
@@ -76,17 +76,17 @@
 
 		<!-- actuator -->
 		<dependency>
-			<groupId>org.flowable</groupId>
+			<groupId>com.proper.enterprise.platform</groupId>
 			<artifactId>flowable-image-generator</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.flowable</groupId>
+			<groupId>com.proper.enterprise.platform</groupId>
 			<artifactId>flowable-bpmn-model</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.flowable</groupId>
+			<groupId>com.proper.enterprise.platform</groupId>
 			<artifactId>flowable-bpmn-layout</artifactId>
 			<optional>true</optional>
 		</dependency>

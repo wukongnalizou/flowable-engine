@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>flowable-form-json-converter</artifactId>
 	<parent>
-		<groupId>org.flowable</groupId>
+		<groupId>com.proper.enterprise.platform</groupId>
 		<artifactId>flowable-root</artifactId>
 		<relativePath>../..</relativePath>
 		<version>6.2.1-SNAPSHOT</version>
@@ -18,7 +18,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.flowable</groupId>
+			<groupId>com.proper.enterprise.platform</groupId>
 			<artifactId>flowable-form-model</artifactId>
 		</dependency>
 		<dependency>
