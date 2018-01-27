@@ -34,12 +34,14 @@ public class UserTask extends Task {
     protected String extensionId;
     protected List<String> candidateUsers = new ArrayList<>();
     protected List<String> candidateGroups = new ArrayList<>();
+    protected List<String> candidateRoles = new ArrayList<>();
     protected List<FormProperty> formProperties = new ArrayList<>();
     protected List<FlowableListener> taskListeners = new ArrayList<>();
     protected String skipExpression;
 
     protected Map<String, Set<String>> customUserIdentityLinks = new HashMap<>();
     protected Map<String, Set<String>> customGroupIdentityLinks = new HashMap<>();
+    protected Map<String, Set<String>> customRoleIdentityLinks = new HashMap<>();
 
     protected List<CustomProperty> customProperties = new ArrayList<>();
 
@@ -127,6 +129,14 @@ public class UserTask extends Task {
         this.candidateGroups = candidateGroups;
     }
 
+    public List<String> getCandidateRoles() {
+        return candidateRoles;
+    }
+
+    public void setCandidateRoles(List<String> candidateRoles) {
+        this.candidateRoles = candidateRoles;
+    }
+
     public List<FormProperty> getFormProperties() {
         return formProperties;
     }
@@ -165,6 +175,17 @@ public class UserTask extends Task {
         groupIdentitySet.add(groupId);
     }
 
+    public void addCustomRoleIdentityLink(String roleId, String type) {
+        Set<String> roleIdentitySet = customRoleIdentityLinks.get(type);
+
+        if (roleIdentitySet == null) {
+            roleIdentitySet = new HashSet<>();
+            customRoleIdentityLinks.put(type, roleIdentitySet);
+        }
+        
+        roleIdentitySet.add(roleId);
+    }
+
     public Map<String, Set<String>> getCustomUserIdentityLinks() {
         return customUserIdentityLinks;
     }
@@ -179,6 +200,14 @@ public class UserTask extends Task {
 
     public void setCustomGroupIdentityLinks(Map<String, Set<String>> customGroupIdentityLinks) {
         this.customGroupIdentityLinks = customGroupIdentityLinks;
+    }
+
+    public Map<String, Set<String>> getCustomRoleIdentityLinks() {
+        return customRoleIdentityLinks;
+    }
+
+    public void setCustomRoleIdentityLinks(Map<String, Set<String>> customRoleIdentityLinks) {
+        this.customRoleIdentityLinks = customRoleIdentityLinks;
     }
 
     public List<CustomProperty> getCustomProperties() {
@@ -217,6 +246,7 @@ public class UserTask extends Task {
 
         setCandidateGroups(new ArrayList<>(otherElement.getCandidateGroups()));
         setCandidateUsers(new ArrayList<>(otherElement.getCandidateUsers()));
+        setCandidateRoles(new ArrayList<>(otherElement.getCandidateRoles()));
 
         setCustomGroupIdentityLinks(otherElement.customGroupIdentityLinks);
         setCustomUserIdentityLinks(otherElement.customUserIdentityLinks);

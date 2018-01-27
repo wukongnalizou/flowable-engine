@@ -6,43 +6,26 @@
 	<description>BPM and workflow engine</description>
 	<groupId>com.proper.enterprise.platform</groupId>
 	<artifactId>flowable-root</artifactId>
-	<version>6.2.1-SNAPSHOT</version>
-	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>7</version>
-	</parent>
+	
 	<packaging>pom</packaging>
+	<version>6.2.1-SNAPSHOT</version>
+
 	<!--打包统一配置-->
-	<repositories>
-		<repository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus Snapshots</name>
-			<url>http://nexus.propersoft.cn:8081/repository/maven-snapshots</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 	<distributionManagement>
-		<snapshotRepository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus Snapshots</name>
-			<url>${sonatypeOssDistMgmtSnapshotsUrl}</url>
-		</snapshotRepository>
-		<repository>
-			<id>sonatype-nexus-staging</id>
-			<name>Nexus Release Repository</name>
-			<url>http://nexus.propersoft.cn:8081/repository/maven-snapshots</url>
-		</repository>
-	</distributionManagement>
+        <repository>
+            <id>nexus-releases</id>
+            <name>Nexus Release Repository</name>
+            <url>http://nexus.propersoft.cn:8081/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <name>Nexus Snapshot Repository</name>
+            <url>http://nexus.propersoft.cn:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 	<!--打包统一配置END-->
+
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sonatypeOssDistMgmtSnapshotsUrl>http://nexus.propersoft.cn:8081/repository/maven-snapshots</sonatypeOssDistMgmtSnapshotsUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>1.7</jdk.version>
 		<spring.framework.version>4.3.9.RELEASE</spring.framework.version>

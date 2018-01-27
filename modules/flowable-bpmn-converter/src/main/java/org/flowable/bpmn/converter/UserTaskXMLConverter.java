@@ -52,6 +52,7 @@ public class UserTaskXMLConverter extends BaseBpmnXMLConverter {
             new ExtensionAttribute(ATTRIBUTE_TASK_USER_PRIORITY),
             new ExtensionAttribute(ATTRIBUTE_TASK_USER_CANDIDATEUSERS),
             new ExtensionAttribute(ATTRIBUTE_TASK_USER_CANDIDATEGROUPS),
+            new ExtensionAttribute(ATTRIBUTE_TASK_USER_CANDIDATEROLES),
             new ExtensionAttribute(ATTRIBUTE_TASK_USER_CATEGORY),
             new ExtensionAttribute(ATTRIBUTE_TASK_SERVICE_EXTENSIONID),
             new ExtensionAttribute(ATTRIBUTE_TASK_USER_SKIP_EXPRESSION));
@@ -108,6 +109,11 @@ public class UserTaskXMLConverter extends BaseBpmnXMLConverter {
             userTask.getCandidateGroups().addAll(parseDelimitedList(expression));
         }
 
+        if (StringUtils.isNotEmpty(BpmnXMLUtil.getAttributeValue(ATTRIBUTE_TASK_USER_CANDIDATEROLES, xtr))) {
+            String expression = BpmnXMLUtil.getAttributeValue(ATTRIBUTE_TASK_USER_CANDIDATEROLES, xtr);
+            userTask.getCandidateRoles().addAll(parseDelimitedList(expression));
+        }
+
         userTask.setExtensionId(BpmnXMLUtil.getAttributeValue(ATTRIBUTE_TASK_SERVICE_EXTENSIONID, xtr));
 
         if (StringUtils.isNotEmpty(BpmnXMLUtil.getAttributeValue(ATTRIBUTE_TASK_USER_SKIP_EXPRESSION, xtr))) {
@@ -131,6 +137,7 @@ public class UserTaskXMLConverter extends BaseBpmnXMLConverter {
         writeQualifiedAttribute(ATTRIBUTE_TASK_USER_OWNER, userTask.getOwner(), xtw);
         writeQualifiedAttribute(ATTRIBUTE_TASK_USER_CANDIDATEUSERS, convertToDelimitedString(userTask.getCandidateUsers()), xtw);
         writeQualifiedAttribute(ATTRIBUTE_TASK_USER_CANDIDATEGROUPS, convertToDelimitedString(userTask.getCandidateGroups()), xtw);
+        writeQualifiedAttribute(ATTRIBUTE_TASK_USER_CANDIDATEROLES, convertToDelimitedString(userTask.getCandidateRoles()), xtw);
         writeQualifiedAttribute(ATTRIBUTE_TASK_USER_DUEDATE, userTask.getDueDate(), xtw);
         writeQualifiedAttribute(ATTRIBUTE_TASK_USER_BUSINESS_CALENDAR_NAME, userTask.getBusinessCalendarName(), xtw);
         writeQualifiedAttribute(ATTRIBUTE_TASK_USER_CATEGORY, userTask.getCategory(), xtw);
@@ -187,13 +194,13 @@ public class UserTaskXMLConverter extends BaseBpmnXMLConverter {
         identityLinkTypes.addAll(userTask.getCustomUserIdentityLinks().keySet());
         identityLinkTypes.addAll(userTask.getCustomGroupIdentityLinks().keySet());
         for (String identityType : identityLinkTypes) {
-            writeCustomIdentities(userTask, identityType, userTask.getCustomUserIdentityLinks().get(identityType), userTask.getCustomGroupIdentityLinks().get(identityType), xtw);
+            writeCustomIdentities(userTask, identityType, userTask.getCustomUserIdentityLinks().get(identityType), userTask.getCustomGroupIdentityLinks().get(identityType), userTask.getCustomRoleIdentityLinks().get(identityType), xtw);
         }
 
         return didWriteExtensionStartElement;
     }
 
-    protected void writeCustomIdentities(UserTask userTask, String identityType, Set<String> users, Set<String> groups, XMLStreamWriter xtw) throws Exception {
+    protected void writeCustomIdentities(UserTask userTask, String identityType, Set<String> users, Set<String> groups, Set<String> roles, XMLStreamWriter xtw) throws Exception {
         xtw.writeStartElement(FLOWABLE_EXTENSIONS_PREFIX, ELEMENT_CUSTOM_RESOURCE, FLOWABLE_EXTENSIONS_NAMESPACE);
         writeDefaultAttribute(ATTRIBUTE_NAME, identityType, xtw);
 
@@ -208,6 +215,12 @@ public class UserTaskXMLConverter extends BaseBpmnXMLConverter {
         if (groups != null) {
             for (String groupId : groups) {
                 identityList.add("group(" + groupId + ")");
+            }
+        }
+
+        if (roles != null) {
+            for (String roleId : roles) {
+                identityList.add("role(" + roleId + ")");
             }
         }
 
@@ -274,12 +287,16 @@ public class UserTaskXMLConverter extends BaseBpmnXMLConverter {
 
                         String userPrefix = "user(";
                         String groupPrefix = "group(";
+                        String rolePrefix = "role(";
                         if (assignmentValue.startsWith(userPrefix)) {
                             assignmentValue = assignmentValue.substring(userPrefix.length(), assignmentValue.length() - 1).trim();
                             ((UserTask) parentElement).getCandidateUsers().add(assignmentValue);
                         } else if (assignmentValue.startsWith(groupPrefix)) {
                             assignmentValue = assignmentValue.substring(groupPrefix.length(), assignmentValue.length() - 1).trim();
                             ((UserTask) parentElement).getCandidateGroups().add(assignmentValue);
+                        } else if (assignmentValue.startsWith(rolePrefix)) {
+                            assignmentValue = assignmentValue.substring(rolePrefix.length(), assignmentValue.length() - 1).trim();
+                            ((UserTask) parentElement).getCandidateRoles().add(assignmentValue);
                         } else {
                             ((UserTask) parentElement).getCandidateGroups().add(assignmentValue);
                         }
@@ -338,12 +355,16 @@ public class UserTaskXMLConverter extends BaseBpmnXMLConverter {
 
                         String userPrefix = "user(";
                         String groupPrefix = "group(";
+                        String rolePrefix = "role(";
                         if (assignmentValue.startsWith(userPrefix)) {
                             assignmentValue = assignmentValue.substring(userPrefix.length(), assignmentValue.length() - 1).trim();
                             ((UserTask) parentElement).addCustomUserIdentityLink(assignmentValue, identityLinkType);
                         } else if (assignmentValue.startsWith(groupPrefix)) {
                             assignmentValue = assignmentValue.substring(groupPrefix.length(), assignmentValue.length() - 1).trim();
                             ((UserTask) parentElement).addCustomGroupIdentityLink(assignmentValue, identityLinkType);
+                        } else if (assignmentValue.startsWith(rolePrefix)) {
+                            assignmentValue = assignmentValue.substring(rolePrefix.length(), assignmentValue.length() - 1).trim();
+                            ((UserTask) parentElement).addCustomRoleIdentityLink(assignmentValue, identityLinkType);
                         } else {
                             ((UserTask) parentElement).addCustomGroupIdentityLink(assignmentValue, identityLinkType);
                         }

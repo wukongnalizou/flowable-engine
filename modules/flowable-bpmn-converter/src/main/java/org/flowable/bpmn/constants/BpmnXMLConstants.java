@@ -63,6 +63,7 @@ public interface BpmnXMLConstants {
     public static final String ELEMENT_POTENTIAL_STARTER = "potentialStarter";
     public static final String ATTRIBUTE_PROCESS_CANDIDATE_USERS = "candidateStarterUsers";
     public static final String ATTRIBUTE_PROCESS_CANDIDATE_GROUPS = "candidateStarterGroups";
+    public static final String ATTRIBUTE_PROCESS_CANDIDATE_ROLES = "candidateStarterRoles";
     public static final String ELEMENT_SUBPROCESS = "subProcess";
     public static final String ATTRIBUTE_TRIGGERED_BY = "triggeredByEvent";
     public static final String ELEMENT_TRANSACTION = "transaction";
@@ -196,6 +197,7 @@ public interface BpmnXMLConstants {
     public static final String ATTRIBUTE_TASK_USER_OWNER = "owner";
     public static final String ATTRIBUTE_TASK_USER_CANDIDATEUSERS = "candidateUsers";
     public static final String ATTRIBUTE_TASK_USER_CANDIDATEGROUPS = "candidateGroups";
+    public static final String ATTRIBUTE_TASK_USER_CANDIDATEROLES = "candidateRoles";
     public static final String ATTRIBUTE_TASK_USER_DUEDATE = "dueDate";
     public static final String ATTRIBUTE_TASK_USER_BUSINESS_CALENDAR_NAME = "businessCalendarName";
     public static final String ATTRIBUTE_TASK_USER_CATEGORY = "category";
