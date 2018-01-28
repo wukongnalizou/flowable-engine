@@ -12,13 +12,17 @@
  */
 package org.flowable.app.security;
 
+import com.proper.enterprise.platform.api.auth.service.UserService;
+import com.proper.enterprise.platform.core.PEPApplicationContext;
+import org.flowable.app.model.common.RemoteUser;
 import org.flowable.idm.api.User;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
- * Utility class for Spring Security.
+ * Utility class to integrate PEP authc and authz into Flowable.
  */
 public final class SecurityUtils {
 
@@ -27,11 +31,15 @@ public final class SecurityUtils {
     private SecurityUtils() {
     }
 
+    private static UserService getUserService() {
+        return PEPApplicationContext.getBean(UserService.class);
+    }
+
     /**
      * Get the login of the current user.
      */
     public static String getCurrentUserId() {
-        User user = getCurrentUserObject();
+        com.proper.enterprise.platform.api.auth.model.User user = getUserService().getCurrentUser();
         if (user != null) {
             return user.getId();
         }
@@ -55,25 +63,26 @@ public final class SecurityUtils {
     }
 
     public static FlowableAppUser getCurrentFlowableAppUser() {
-        FlowableAppUser user = null;
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        if (securityContext != null && securityContext.getAuthentication() != null) {
-            Object principal = securityContext.getAuthentication().getPrincipal();
-            if (principal instanceof FlowableAppUser) {
-                user = (FlowableAppUser) principal;
-            }
-        }
-        return user;
+        com.proper.enterprise.platform.api.auth.model.User curUser = getUserService().getCurrentUser();
+        User user = new RemoteUser();
+        user.setId(curUser.getId());
+        user.setPassword(curUser.getPassword());
+        user.setEmail(curUser.getEmail());
+        user.setLastName(curUser.getUsername());
+
+        Collection<? extends GrantedAuthority> collection = new ArrayList<>();
+        return new FlowableAppUser(user, user.getId(), collection);
     }
 
     public static boolean currentUserHasCapability(String capability) {
-        FlowableAppUser user = getCurrentFlowableAppUser();
-        for (GrantedAuthority grantedAuthority : user.getAuthorities()) {
-            if (capability.equals(grantedAuthority.getAuthority())) {
-                return true;
-            }
-        }
-        return false;
+//        FlowableAppUser user = getCurrentFlowableAppUser();
+//        for (GrantedAuthority grantedAuthority : user.getAuthorities()) {
+//            if (capability.equals(grantedAuthority.getAuthority())) {
+//                return true;
+//            }
+//        }
+//        return false;
+        return true;
     }
 
     public static void assumeUser(User user) {
