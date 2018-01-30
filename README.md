@@ -1,5 +1,7 @@
-Flowable (V6)
-========
+Flowable (V6) Proper Soft Branch
+================================
+
+`mvn -DskipTests clean package deploy -P proper`
 
 [Maven Central:  
     ![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.flowable/flowable-engine/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.flowable/flowable-engine)
