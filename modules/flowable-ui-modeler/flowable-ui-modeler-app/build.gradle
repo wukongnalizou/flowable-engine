@@ -21,16 +21,13 @@ task pack(type: Jar) {
     metaInf {
         into 'resources'
         from 'src/main/webapp'
-        //exclude 'editor/editor-app/configuration/kis-toolbar-custom-actions.js'
+        exclude 'editor-app/configuration/flowable-toolbar-custom-actions.js'
         exclude 'editor-app/configuration/properties/assignment-display-template.html'
         exclude 'editor-app/configuration/properties/assignment-popup.html'
         exclude 'editor-app/configuration/properties-assignment-controller.js'
         exclude 'editor-app/configuration/toolbar-custom-actions.js'
-        exclude 'scripts/editor-directives.js'
-        //exclude 'editor/scripts/services/auth-services.js'
         exclude 'scripts/services/identity-services.js'
         exclude 'scripts/app-cfg.js'
-        //exclude 'scripts/common/services/authentication-service.js'
     }
     manifest {
         attributes('Created-By': 'Gradle',
