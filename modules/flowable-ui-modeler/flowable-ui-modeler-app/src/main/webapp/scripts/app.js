@@ -149,9 +149,10 @@ flowableModeler
         This can be used to map multiple browser language keys to a
         angular translate language key.
         */
-        // .registerAvailableLanguageKeys(['en'], {
-        //     'en-*': 'en'
-        // })
+        .registerAvailableLanguageKeys(['en', 'zh'], {
+            'en-*': 'en',
+            'zh-*': 'zh'
+        })
         .useSanitizeValueStrategy('escapeParameters')
         .uniformLanguageTag('bcp47')
         .determinePreferredLanguage();

@@ -39,12 +39,13 @@
     <link href="styles/common/style.css" rel="stylesheet">
     <link href="styles/common/style-retina.css" rel="stylesheet">
     <link rel="stylesheet" href="styles/style-editor.css">
+    <link rel="stylesheet" href="styles/style-editor-custom.css">
     <!-- endbuild -->
 
 </head>
 <body ng-app="flowableModeler" ng-cloak>
 
-    <div class="navbar navbar-fixed-top navbar-inverse" role="navigation" id="main-header">
+    <div class="navbar navbar-fixed-top navbar-inverse navbar-display-none" role="navigation" id="main-header">
         <div class="fixed-container">
             <div class="navbar-header">
                 <a ng-click="backToLanding()" class="landing-logo" ng-if="account != null && account != undefined" title="{{'GENERAL.MAIN-TITLE' | translate}}">
@@ -114,7 +115,7 @@
         </div>
     </div>
 
-    <div id="main" class="wrapper full clearfix" ng-view="" ng-cloak ng-style="{height: window.height + 'px'}">
+    <div id="main" class="wrapper full clearfix editor-main-padding" ng-view="" ng-cloak ng-style="{height: window.height + 'px'}">
     </div>
 
 <!--[if lt IE 9]>

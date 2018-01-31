@@ -343,15 +343,15 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
     };
 
     $scope.saveAndClose = function () {
-    	$scope.save(function() {
+        $scope.save(function() {
             if (editorManager.getStencilData()) {
                 var stencilNameSpace = editorManager.getStencilData().namespace;
                 if (stencilNameSpace !== undefined && stencilNameSpace !== null && stencilNameSpace.indexOf('cmmn1.1') !== -1) {
                     $location.path("/casemodels");
                 	return;
             	}
-        	}
-        	$location.path('/processes');
+            }
+            FLOWABLE.TOOLBAR.ACTIONS.customClose($location);
     	});
     };
     
