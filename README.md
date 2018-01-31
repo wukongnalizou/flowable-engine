@@ -1,7 +1,5 @@
-Flowable (V6) Proper Soft Branch
-================================
-
-`mvn -DskipTests clean package deploy -P proper`
+Flowable (V6)
+=============
 
 [Maven Central:  
     ![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.flowable/flowable-engine/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.flowable/flowable-engine)
@@ -51,3 +49,35 @@ After you've done that you can post questions and comments on http://forum.flowa
 ### QA server
 
 There's a Jenkins server running the Flowable unit tests on http://qa.flowable.org.
+
+
+Proper Soft Branch
+==================
+
+Pack custom version Flowable
+----------------------------
+
+### How to pack
+
+`mvn -DskipTests clean package deploy -P proper`
+
+Pack web designer in jar
+------------------------
+
+Use `Gradle` build system to pack Flowable front-end static resources from `flowable-ui-modeler-app` module into `flowable-web-designer-xxx.jar` as `Flowable Web Designer`.
+
+Static resources are packed under `META-INF/resources/` in the jar, which could be used as a dependency of the main web app.
+
+### How to pack
+
+    # get a clean package
+    $ ./gradlew clean pack
+    # and then upload jar
+    $ ./gradlew upload
+
+and you could find the `flowable-web-designer-xxx.jar` at `modules/flowable-ui-modeler/flowable-ui-modeler-app/build/libs`
+
+Current version
+---------------
+
+Now this branch has merged [flowable-6.2.1](https://github.com/flowable/flowable-engine/tree/flowable-6.2.1) tag, and you can find diff [here](https://github.com/flowable/flowable-engine/compare/flowable-6.2.1...propersoft-cn:proper-6.2.1)
