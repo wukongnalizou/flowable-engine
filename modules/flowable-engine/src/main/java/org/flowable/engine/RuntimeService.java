@@ -412,7 +412,17 @@ public interface RuntimeService {
      *             when the process instance or group doesn't exist.
      */
     void addGroupIdentityLink(String processInstanceId, String groupId, String identityLinkType);
-
+    
+    /**
+     * Involves a role with a process instance. The type of identityLink is defined by the given identityLink.
+     *
+     * @param processInstanceId id of the process instance, cannot be null.
+     * @param roleId            id of the role to involve, cannot be null.
+     * @param identityLinkType  type of identity, cannot be null (@see {@link IdentityLinkType}).
+     * @throws FlowableObjectNotFoundException when the process instance or role doesn't exist.
+     */
+    void addRoleIdentityLink(String processInstanceId, String roleId, String identityLinkType);
+    
     /**
      * Convenience shorthand for {@link #addUserIdentityLink(String, String, String)}; with type {@link IdentityLinkType#CANDIDATE}
      * 
@@ -438,6 +448,16 @@ public interface RuntimeService {
     void addParticipantGroup(String processInstanceId, String groupId);
 
     /**
+     * Convenience shorthand for {@link #addRoleIdentityLink(String, String, String)}; with type
+     * {@link IdentityLinkType#CANDIDATE}
+     *
+     * @param processInstanceId id of the process instance, cannot be null.
+     * @param roleId            id of the role to use as candidate, cannot be null.
+     * @throws FlowableObjectNotFoundException when the task or role doesn't exist.
+     */
+    void addParticipantRole(String processInstanceId, String roleId);
+
+    /**
      * Convenience shorthand for {@link #deleteUserIdentityLink(String, String, String)}; with type {@link IdentityLinkType#CANDIDATE}
      * 
      * @param processInstanceId
@@ -460,7 +480,16 @@ public interface RuntimeService {
      *             when the task or group doesn't exist.
      */
     void deleteParticipantGroup(String processInstanceId, String groupId);
-
+    
+    /**
+     * Convenience shorthand for {@link #deleteRoleIdentityLink(String, String, String)}; with type
+     * {@link IdentityLinkType#CANDIDATE}
+     *
+     * @param processInstanceId id of the process instance, cannot be null.
+     * @param roleId           id of the role to use as candidate, cannot be null.
+     * @throws FlowableObjectNotFoundException when the task or role doesn't exist.
+     */
+    void deleteParticipantRole(String processInstanceId, String roleId);
     /**
      * Removes the association between a user and a process instance for the given identityLinkType.
      * 
@@ -488,7 +517,16 @@ public interface RuntimeService {
      *             when the task or group doesn't exist.
      */
     void deleteGroupIdentityLink(String processInstanceId, String groupId, String identityLinkType);
-
+    
+    /**
+     * Removes the association between a group and a process instance for the given identityLinkType.
+     *
+     * @param processInstanceId id of the process instance, cannot be null.
+     * @param roleId           id of the role to involve, cannot be null.
+     * @param identityLinkType  type of identity, cannot be null (@see {@link IdentityLinkType}).
+     * @throws FlowableObjectNotFoundException when the task or role doesn't exist.
+     */
+    void deleteRoleIdentityLink(String processInstanceId, String roleId, String identityLinkType);
     /**
      * Retrieves the {@link IdentityLink}s associated with the given process instance. Such an {@link IdentityLink} informs how a certain user is involved with a process instance.
      */

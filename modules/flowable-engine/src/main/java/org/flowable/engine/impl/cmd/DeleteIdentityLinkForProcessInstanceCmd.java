@@ -13,8 +13,6 @@
 
 package org.flowable.engine.impl.cmd;
 
-import java.io.Serializable;
-
 import org.flowable.engine.common.api.FlowableIllegalArgumentException;
 import org.flowable.engine.common.api.FlowableObjectNotFoundException;
 import org.flowable.engine.common.impl.interceptor.Command;
@@ -24,6 +22,8 @@ import org.flowable.engine.impl.persistence.entity.ExecutionEntity;
 import org.flowable.engine.impl.util.CommandContextUtil;
 import org.flowable.engine.impl.util.Flowable5Util;
 import org.flowable.engine.impl.util.IdentityLinkUtil;
+
+import java.io.Serializable;
 
 /**
  * @author Tijs Rademakers
@@ -39,17 +39,21 @@ public class DeleteIdentityLinkForProcessInstanceCmd implements Command<Object>,
 
     protected String groupId;
 
+    protected String roleId;
+
     protected String type;
 
-    public DeleteIdentityLinkForProcessInstanceCmd(String processInstanceId, String userId, String groupId, String type) {
-        validateParams(userId, groupId, processInstanceId, type);
+    public DeleteIdentityLinkForProcessInstanceCmd(String processInstanceId, String userId, String groupId, String
+            roleId, String type) {
+        validateParams(userId, groupId, roleId, processInstanceId, type);
         this.processInstanceId = processInstanceId;
         this.userId = userId;
         this.groupId = groupId;
+        this.roleId = roleId;
         this.type = type;
     }
 
-    protected void validateParams(String userId, String groupId, String processInstanceId, String type) {
+    protected void validateParams(String userId, String groupId, String roleId, String processInstanceId, String type) {
         if (processInstanceId == null) {
             throw new FlowableIllegalArgumentException("processInstanceId is null");
         }
@@ -58,7 +62,7 @@ public class DeleteIdentityLinkForProcessInstanceCmd implements Command<Object>,
             throw new FlowableIllegalArgumentException("type is required when deleting a process identity link");
         }
 
-        if (userId == null && groupId == null) {
+        if (userId == null && groupId == null && roleId == null) {
             throw new FlowableIllegalArgumentException("userId and groupId cannot both be null");
         }
     }
@@ -77,7 +81,7 @@ public class DeleteIdentityLinkForProcessInstanceCmd implements Command<Object>,
             return null;
         }
 
-        IdentityLinkUtil.deleteProcessInstanceIdentityLinks(processInstance, userId, groupId, type);
+        IdentityLinkUtil.deleteProcessInstanceIdentityLinks(processInstance, userId, groupId, roleId, type);
         CommandContextUtil.getHistoryManager(commandContext).createProcessInstanceIdentityLinkComment(processInstanceId, userId, groupId, type, false);
 
         return null;

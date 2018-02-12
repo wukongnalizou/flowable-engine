@@ -246,11 +246,38 @@ public class DynamicBpmnServiceImpl extends ServiceImpl implements DynamicBpmnSe
     }
 
     @Override
+    public ObjectNode changeUserTaskCandidateRole(String id, String candidateRole, boolean overwriteOtherChangedEntries) {
+        ObjectNode infoNode = processEngineConfiguration.getObjectMapper().createObjectNode();
+        changeUserTaskCandidateRole(id, candidateRole, overwriteOtherChangedEntries, infoNode);
+        return infoNode;
+    }
+
+    @Override
+    public void changeUserTaskCandidateRole(String id, String candidateRole, boolean overwriteOtherChangedEntries, ObjectNode infoNode) {
+        ArrayNode valuesNode = null;
+        if (overwriteOtherChangedEntries) {
+            valuesNode = processEngineConfiguration.getObjectMapper().createArrayNode();
+        } else {
+            if (doesElementPropertyExist(id, USER_TASK_CANDIDATE_ROLES, infoNode)) {
+                valuesNode = (ArrayNode) infoNode.get(BPMN_NODE).get(id).get(USER_TASK_CANDIDATE_ROLES);
+            }
+
+            if (valuesNode == null || valuesNode.isNull()) {
+                valuesNode = processEngineConfiguration.getObjectMapper().createArrayNode();
+            }
+        }
+
+        valuesNode.add(candidateRole);
+        setElementProperty(id, USER_TASK_CANDIDATE_ROLES, valuesNode, infoNode);
+    }
+
+    @Override
     public ObjectNode changeUserTaskCandidateUsers(String id, List<String> candidateUsers) {
         ObjectNode infoNode = processEngineConfiguration.getObjectMapper().createObjectNode();
         changeUserTaskCandidateUsers(id, candidateUsers, infoNode);
         return infoNode;
     }
+    
 
     @Override
     public void changeUserTaskCandidateUsers(String id, List<String> candidateUsers, ObjectNode infoNode) {
@@ -276,7 +303,23 @@ public class DynamicBpmnServiceImpl extends ServiceImpl implements DynamicBpmnSe
         }
         setElementProperty(id, USER_TASK_CANDIDATE_GROUPS, candidateGroupsNode, infoNode);
     }
-    
+
+    @Override
+    public ObjectNode changeUserTaskCandidateRoles(String id, List<String> candidateRoles) {
+        ObjectNode infoNode = processEngineConfiguration.getObjectMapper().createObjectNode();
+        changeUserTaskCandidateGroups(id, candidateRoles, infoNode);
+        return infoNode;
+    }
+
+    @Override
+    public void changeUserTaskCandidateRoles(String id, List<String> candidateRoles, ObjectNode infoNode) {
+        ArrayNode candidateRolesNode = processEngineConfiguration.getObjectMapper().createArrayNode();
+        for (String candidateRole : candidateRoles) {
+            candidateRolesNode.add(candidateRole);
+        }
+        setElementProperty(id, USER_TASK_CANDIDATE_ROLES, candidateRolesNode, infoNode);
+    }
+
     @Override
     public ObjectNode changeMultiInstanceCompletionCondition(String id, String completionCondition) {
         ObjectNode infoNode = processEngineConfiguration.getObjectMapper().createObjectNode();

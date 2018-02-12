@@ -12,8 +12,10 @@
  */
 package org.flowable.idm.engine.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.proper.enterprise.platform.api.auth.model.Role;
 import org.flowable.idm.api.Group;
 import org.flowable.idm.api.GroupQuery;
 import org.flowable.idm.api.IdmIdentityService;
@@ -70,6 +72,16 @@ public class IdmIdentityServiceImpl extends ServiceImpl implements IdmIdentitySe
         return commandExecutor.execute(new CreateGroupCmd(groupId));
     }
 
+    @Override
+    public List<Group> queryGroupByUserId(String userId) {
+        return createGroupQuery().groupMember(userId).list();
+    }
+
+    @Override
+    public List<Role> queryRoleByUserId(String userId) {
+        return new ArrayList<>();
+    }
+    
     @Override
     public User newUser(String userId) {
         return commandExecutor.execute(new CreateUserCmd(userId));

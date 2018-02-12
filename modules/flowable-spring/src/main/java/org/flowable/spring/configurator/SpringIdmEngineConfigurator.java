@@ -30,6 +30,7 @@ public class SpringIdmEngineConfigurator extends IdmEngineConfigurator {
         if (idmEngineConfiguration == null) {
             idmEngineConfiguration = new SpringIdmEngineConfiguration();
         }
+        idmEngineConfiguration.setExtIdm(engineConfiguration.isExtIdm());
         initialiseCommonProperties(engineConfiguration, idmEngineConfiguration);
         SpringEngineConfiguration springEngineConfiguration = (SpringEngineConfiguration) engineConfiguration;
         idmEngineConfiguration.setTransactionManager(springEngineConfiguration.getTransactionManager());

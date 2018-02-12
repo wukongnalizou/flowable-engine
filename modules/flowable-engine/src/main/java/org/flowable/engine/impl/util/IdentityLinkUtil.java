@@ -12,8 +12,6 @@
  */
 package org.flowable.engine.impl.util;
 
-import java.util.List;
-
 import org.flowable.engine.impl.persistence.CountingExecutionEntity;
 import org.flowable.engine.impl.persistence.entity.ExecutionEntity;
 import org.flowable.identitylink.service.IdentityLinkType;
@@ -21,15 +19,19 @@ import org.flowable.identitylink.service.impl.persistence.entity.IdentityLinkEnt
 import org.flowable.task.service.impl.persistence.CountingTaskEntity;
 import org.flowable.task.service.impl.persistence.entity.TaskEntity;
 
+import java.util.List;
+
 /**
  * @author Tijs Rademakers
  */
 public class IdentityLinkUtil {
-    
-    public static IdentityLinkEntity createProcessInstanceIdentityLink(ExecutionEntity processInstanceExecution, String userId, String groupId, String type) {
+
+    public static IdentityLinkEntity createProcessInstanceIdentityLink(ExecutionEntity processInstanceExecution,
+                                                                       String userId, String groupId, String roleId,
+                                                                       String type) {
         IdentityLinkEntity identityLinkEntity = CommandContextUtil.getIdentityLinkService().createProcessInstanceIdentityLink(
-                        processInstanceExecution.getId(), userId, groupId, type);
-        
+                processInstanceExecution.getId(), userId, groupId, roleId, type);
+
         CommandContextUtil.getHistoryManager().recordIdentityLinkCreated(identityLinkEntity);
         
         if (CountingEntityUtil.isExecutionRelatedEntityCountEnabledGlobally()) {
@@ -43,18 +45,19 @@ public class IdentityLinkUtil {
         
         return identityLinkEntity;
     }
-    
-    public static void deleteTaskIdentityLinks(TaskEntity taskEntity, String userId, String groupId, String type) {
+
+    public static void deleteTaskIdentityLinks(TaskEntity taskEntity, String userId, String groupId, String roleId,
+                                               String type) {
         List<IdentityLinkEntity> removedIdentityLinkEntities = CommandContextUtil.getIdentityLinkService().deleteTaskIdentityLink(
-                        taskEntity.getId(), taskEntity.getIdentityLinks(), userId, groupId, type);
+                taskEntity.getId(), taskEntity.getIdentityLinks(), userId, groupId, roleId, type);
         
         handleTaskIdentityLinkDeletions(taskEntity, removedIdentityLinkEntities, true);
     }
 
-    public static void deleteProcessInstanceIdentityLinks(ExecutionEntity processInstanceEntity, String userId, String groupId, String type) {
+    public static void deleteProcessInstanceIdentityLinks(ExecutionEntity processInstanceEntity, String userId, String groupId, String roleId, String type) {
         List<IdentityLinkEntity> removedIdentityLinkEntities = CommandContextUtil.getIdentityLinkService().deleteProcessInstanceIdentityLink(
-                        processInstanceEntity.getId(), userId, groupId, type);
-        
+                processInstanceEntity.getId(), userId, groupId, roleId, type);
+
         for (IdentityLinkEntity identityLinkEntity : removedIdentityLinkEntities) {
             CommandContextUtil.getHistoryManager().recordIdentityLinkDeleted(identityLinkEntity.getId());
             handleProcessInstanceIdentityLinkDeletion(processInstanceEntity, identityLinkEntity);
@@ -86,8 +89,9 @@ public class IdentityLinkUtil {
                     return;
                 }
             }
-            
-            IdentityLinkUtil.createProcessInstanceIdentityLink(executionEntity, identityLinkEntity.getUserId(), null, IdentityLinkType.PARTICIPANT);
+
+            IdentityLinkUtil.createProcessInstanceIdentityLink(executionEntity, identityLinkEntity.getUserId(),
+                    null, null, IdentityLinkType.PARTICIPANT);
         }
     }
     

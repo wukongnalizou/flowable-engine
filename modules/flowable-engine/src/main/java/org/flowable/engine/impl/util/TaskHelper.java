@@ -12,9 +12,6 @@
  */
 package org.flowable.engine.impl.util;
 
-import java.util.List;
-import java.util.Map;
-
 import org.flowable.engine.common.api.FlowableException;
 import org.flowable.engine.common.api.delegate.event.FlowableEngineEventType;
 import org.flowable.engine.common.api.delegate.event.FlowableEventDispatcher;
@@ -37,13 +34,16 @@ import org.flowable.task.service.impl.persistence.CountingTaskEntity;
 import org.flowable.task.service.impl.persistence.entity.HistoricTaskInstanceEntity;
 import org.flowable.task.service.impl.persistence.entity.TaskEntity;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author Tijs Rademakers
  */
 public class TaskHelper {
 
     public static void completeTask(TaskEntity taskEntity, Map<String, Object> variables,
-            Map<String, Object> transientVariables, boolean localScope, CommandContext commandContext) {
+                                    Map<String, Object> transientVariables, boolean localScope, CommandContext commandContext) {
         
         // Task complete logic
 
@@ -77,7 +77,8 @@ public class TaskHelper {
         CommandContextUtil.getProcessEngineConfiguration(commandContext).getListenerNotificationHelper().executeTaskListeners(taskEntity, TaskListener.EVENTNAME_COMPLETE);
         if (Authentication.getAuthenticatedUserId() != null && taskEntity.getProcessInstanceId() != null) {
             ExecutionEntity processInstanceEntity = CommandContextUtil.getExecutionEntityManager(commandContext).findById(taskEntity.getProcessInstanceId());
-            IdentityLinkUtil.createProcessInstanceIdentityLink(processInstanceEntity, Authentication.getAuthenticatedUserId(), null, IdentityLinkType.PARTICIPANT);
+            IdentityLinkUtil.createProcessInstanceIdentityLink(processInstanceEntity, Authentication
+                    .getAuthenticatedUserId(), null, null, IdentityLinkType.PARTICIPANT);
         }
 
         FlowableEventDispatcher eventDispatcher = CommandContextUtil.getProcessEngineConfiguration().getEventDispatcher();
@@ -167,7 +168,8 @@ public class TaskHelper {
     public static void addAssigneeIdentityLinks(TaskEntity taskEntity) {
         if (taskEntity.getAssignee() != null && taskEntity.getProcessInstanceId() != null) {
             ExecutionEntity processInstance = CommandContextUtil.getExecutionEntityManager().findById(taskEntity.getProcessInstanceId());
-            IdentityLinkUtil.createProcessInstanceIdentityLink(processInstance, taskEntity.getAssignee(), null, IdentityLinkType.PARTICIPANT);
+            IdentityLinkUtil.createProcessInstanceIdentityLink(processInstance, taskEntity.getAssignee(), null, null,
+                    IdentityLinkType.PARTICIPANT);
         }
     }
     
@@ -178,7 +180,8 @@ public class TaskHelper {
 
         if (owner != null && taskEntity.getProcessInstanceId() != null) {
             ExecutionEntity processInstance = CommandContextUtil.getExecutionEntityManager().findById(taskEntity.getProcessInstanceId());
-            IdentityLinkUtil.createProcessInstanceIdentityLink(processInstance, owner, null, IdentityLinkType.PARTICIPANT);
+            IdentityLinkUtil.createProcessInstanceIdentityLink(processInstance, owner, null, null, IdentityLinkType
+                    .PARTICIPANT);
         }
     }
     

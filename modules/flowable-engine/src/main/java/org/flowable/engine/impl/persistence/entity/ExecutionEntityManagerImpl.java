@@ -13,17 +13,6 @@
 
 package org.flowable.engine.impl.persistence.entity;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.flowable.bpmn.model.BoundaryEvent;
 import org.flowable.bpmn.model.FlowElement;
 import org.flowable.bpmn.model.FlowNode;
@@ -41,11 +30,7 @@ import org.flowable.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.flowable.engine.impl.persistence.CountingExecutionEntity;
 import org.flowable.engine.impl.persistence.entity.data.ExecutionDataManager;
 import org.flowable.engine.impl.runtime.callback.ProcessInstanceState;
-import org.flowable.engine.impl.util.CommandContextUtil;
-import org.flowable.engine.impl.util.CountingEntityUtil;
-import org.flowable.engine.impl.util.IdentityLinkUtil;
-import org.flowable.engine.impl.util.ProcessInstanceHelper;
-import org.flowable.engine.impl.util.TaskHelper;
+import org.flowable.engine.impl.util.*;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.Execution;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -59,6 +44,8 @@ import org.flowable.variable.api.persistence.entity.VariableInstance;
 import org.flowable.variable.service.impl.persistence.entity.VariableInstanceEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 /**
  * @author Tom Baeyens
@@ -260,7 +247,9 @@ public class ExecutionEntityManagerImpl extends AbstractEntityManager<ExecutionE
         processInstanceExecution.setProcessInstanceId(processInstanceExecution.getId());
         processInstanceExecution.setRootProcessInstanceId(processInstanceExecution.getId());
         if (authenticatedUserId != null) {
-            IdentityLinkUtil.createProcessInstanceIdentityLink(processInstanceExecution, authenticatedUserId, null, IdentityLinkType.STARTER);
+            IdentityLinkUtil.createProcessInstanceIdentityLink(processInstanceExecution, authenticatedUserId, null,
+                    null,
+                    IdentityLinkType.STARTER);
         }
 
         // Fire events
@@ -333,7 +322,8 @@ public class ExecutionEntityManagerImpl extends AbstractEntityManager<ExecutionE
         superExecutionEntity.setSubProcessInstance(subProcessInstance);
 
         if (authenticatedUserId != null) {
-            IdentityLinkUtil.createProcessInstanceIdentityLink(subProcessInstance, authenticatedUserId, null, IdentityLinkType.STARTER);
+            IdentityLinkUtil.createProcessInstanceIdentityLink(subProcessInstance, authenticatedUserId, null, null,
+                    IdentityLinkType.STARTER);
         }
 
         FlowableEventDispatcher flowableEventDispatcher = processEngineConfiguration.getEventDispatcher();
@@ -496,10 +486,10 @@ public class ExecutionEntityManagerImpl extends AbstractEntityManager<ExecutionE
 
     @Override
     public void deleteProcessInstanceExecutionEntity(String processInstanceId,
-                                                     String currentFlowElementId, 
-                                                     String deleteReason, 
-                                                     boolean cascade, 
-                                                     boolean cancel, 
+                                                     String currentFlowElementId,
+                                                     String deleteReason,
+                                                     boolean cascade,
+                                                     boolean cancel,
                                                      boolean fireEvents) {
 
         ExecutionEntity processInstanceEntity = findById(processInstanceId);
@@ -652,8 +642,7 @@ public class ExecutionEntityManagerImpl extends AbstractEntityManager<ExecutionE
 
             if (execution.isMultiInstanceRoot()) {
                 dispatchMultiInstanceActivityCancelled(execution, cancelActivity);
-            }
-            else {
+            } else {
                 dispatchActivityCancelled(execution, cancelActivity);
             }
         }

@@ -23,6 +23,7 @@ public class RestIdentityLink {
     private String url;
     private String user;
     private String group;
+    private String role;
     private String type;
 
     @ApiModelProperty(example = "")
@@ -59,5 +60,13 @@ public class RestIdentityLink {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

@@ -3,6 +3,7 @@ create table ACT_HI_IDENTITYLINK (
     GROUP_ID_ varchar(255),
     TYPE_ varchar(255),
     USER_ID_ varchar(255),
+    ROLE_ID_ varchar(64),
     TASK_ID_ varchar(64),
     CREATE_TIME_ datetime(3),
     PROC_INST_ID_ varchar(64),

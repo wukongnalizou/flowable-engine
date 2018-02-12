@@ -13,8 +13,6 @@
 
 package org.flowable.engine.impl.cmd;
 
-import java.io.Serializable;
-
 import org.flowable.engine.common.api.FlowableIllegalArgumentException;
 import org.flowable.engine.common.api.FlowableObjectNotFoundException;
 import org.flowable.engine.common.impl.interceptor.Command;
@@ -24,6 +22,8 @@ import org.flowable.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.flowable.engine.impl.util.CommandContextUtil;
 import org.flowable.engine.impl.util.Flowable5Util;
 import org.flowable.engine.repository.ProcessDefinition;
+
+import java.io.Serializable;
 
 /**
  * @author Tijs Rademakers
@@ -38,11 +38,15 @@ public class DeleteIdentityLinkForProcessDefinitionCmd implements Command<Object
 
     protected String groupId;
 
-    public DeleteIdentityLinkForProcessDefinitionCmd(String processDefinitionId, String userId, String groupId) {
+    protected String roleId;
+
+    public DeleteIdentityLinkForProcessDefinitionCmd(String processDefinitionId, String userId, String groupId, String
+            roleId) {
         validateParams(userId, groupId, processDefinitionId);
         this.processDefinitionId = processDefinitionId;
         this.userId = userId;
         this.groupId = groupId;
+        this.roleId = roleId;
     }
 
     protected void validateParams(String userId, String groupId, String processDefinitionId) {
@@ -69,7 +73,8 @@ public class DeleteIdentityLinkForProcessDefinitionCmd implements Command<Object
             return null;
         }
 
-        CommandContextUtil.getIdentityLinkService().deleteProcessDefinitionIdentityLink(processDefinition.getId(), userId, groupId);
+        CommandContextUtil.getIdentityLinkService().deleteProcessDefinitionIdentityLink(processDefinition.getId(),
+                userId, groupId, roleId);
 
         return null;
     }

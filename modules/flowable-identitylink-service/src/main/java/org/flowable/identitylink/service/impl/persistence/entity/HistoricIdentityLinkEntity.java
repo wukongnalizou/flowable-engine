@@ -32,6 +32,8 @@ public interface HistoricIdentityLinkEntity extends HistoricIdentityLink, Entity
 
     void setGroupId(String groupId);
 
+    void setRoleId(String roleId);
+
     void setTaskId(String taskId);
 
     void setCreateTime(Date createTime);

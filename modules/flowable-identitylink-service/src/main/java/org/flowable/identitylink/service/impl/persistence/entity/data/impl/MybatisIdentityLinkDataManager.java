@@ -12,16 +12,16 @@
  */
 package org.flowable.identitylink.service.impl.persistence.entity.data.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.flowable.engine.common.impl.db.AbstractDataManager;
 import org.flowable.engine.common.impl.db.CachedEntityMatcher;
 import org.flowable.identitylink.service.impl.persistence.entity.IdentityLinkEntity;
 import org.flowable.identitylink.service.impl.persistence.entity.IdentityLinkEntityImpl;
 import org.flowable.identitylink.service.impl.persistence.entity.data.IdentityLinkDataManager;
 import org.flowable.identitylink.service.impl.persistence.entity.data.impl.cachematcher.IdentityLinksByProcInstMatcher;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Joram Barrez
@@ -60,33 +60,40 @@ public class MybatisIdentityLinkDataManager extends AbstractDataManager<Identity
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<IdentityLinkEntity> findIdentityLinkByTaskUserGroupAndType(String taskId, String userId, String groupId, String type) {
+    public List<IdentityLinkEntity> findIdentityLinkByTaskUserGroupRoleAndType(String taskId, String userId, String
+            groupId, String roleId, String type) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("taskId", taskId);
         parameters.put("userId", userId);
         parameters.put("groupId", groupId);
+        parameters.put("roleId", roleId);
         parameters.put("type", type);
         return getDbSqlSession().selectList("selectIdentityLinkByTaskUserGroupAndType", parameters);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<IdentityLinkEntity> findIdentityLinkByProcessInstanceUserGroupAndType(String processInstanceId, String userId, String groupId, String type) {
+    public List<IdentityLinkEntity> findIdentityLinkByProcessInstanceUserGroupRoleAndType(String processInstanceId,
+                                                                                      String userId, String groupId,
+                                                                                      String roleId, String type) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("processInstanceId", processInstanceId);
         parameters.put("userId", userId);
         parameters.put("groupId", groupId);
+        parameters.put("roleId", roleId);
         parameters.put("type", type);
         return getDbSqlSession().selectList("selectIdentityLinkByProcessInstanceUserGroupAndType", parameters);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<IdentityLinkEntity> findIdentityLinkByProcessDefinitionUserAndGroup(String processDefinitionId, String userId, String groupId) {
+    public List<IdentityLinkEntity> findIdentityLinkByProcessDefinitionUserAndGroupAndRole(String processDefinitionId,
+                                                                                    String userId, String groupId,String roleId) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("processDefinitionId", processDefinitionId);
         parameters.put("userId", userId);
         parameters.put("groupId", groupId);
+        parameters.put("roleId", roleId);
         return getDbSqlSession().selectList("selectIdentityLinkByProcessDefinitionUserAndGroup", parameters);
     }
 

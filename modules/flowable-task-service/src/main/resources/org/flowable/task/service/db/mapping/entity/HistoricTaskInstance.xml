@@ -362,6 +362,7 @@
       <result property="type" column="ILINK_TYPE_" jdbcType="VARCHAR" />
       <result property="userId" column="ILINK_USER_ID_" jdbcType="VARCHAR" />
       <result property="groupId" column="ILINK_GROUP_ID_" jdbcType="VARCHAR" />
+      <result property="roleId" column="ILINK_ROLE_ID_" jdbcType="VARCHAR" />
       <result property="taskId" column="ILINK_TASK_ID_" jdbcType="VARCHAR" />
       <result property="processInstanceId" column="ILINK_PROC_INST_ID_" jdbcType="VARCHAR" />
       <result property="createTime" column="ILINK_CREATE_TIME_" jdbcType="TIMESTAMP" />
@@ -424,7 +425,7 @@
       </if>
       <if test="includeIdentityLinks">
         ILINK.ID_ as ILINK_ID_, ILINK.TYPE_ as ILINK_TYPE_, ILINK.USER_ID_ as ILINK_USER_ID_,
-        ILINK.GROUP_ID_ as ILINK_GROUP_ID_, ILINK.TASK_ID_ as ILINK_TASK_ID_,
+        ILINK.GROUP_ID_ as ILINK_GROUP_ID_,ILINK.ROLE_ID_ as ILINK_ROLE_ID_, ILINK.TASK_ID_ as ILINK_TASK_ID_,
         ILINK.PROC_INST_ID_ as ILINK_PROC_INST_ID_, ILINK.CREATE_TIME_ as ILINK_CREATE_TIME_
       </if>
       <if test="firstResult != null and firstResult &gt;= 0">${limitBetween}</if>
@@ -448,7 +449,7 @@
       <if test="includeIdentityLinks">
         ,
         TEMPILINK_ID_ as ILINK_ID_, TEMPILINK_TYPE_ as ILINK_TYPE_, TEMPILINK_USER_ID_ as ILINK_USER_ID_,
-        TEMPILINK_GROUP_ID_ as ILINK_GROUP_ID_, TEMPILINK_TASK_ID_ as ILINK_TASK_ID_,
+        TEMPILINK_GROUP_ID_ as ILINK_GROUP_ID_,ILINK.ROLE_ID_ as ILINK_ROLE_ID_, TEMPILINK_TASK_ID_ as ILINK_TASK_ID_,
         TEMPILINK_PROC_INST_ID_ as ILINK_PROC_INST_ID_, TEMPILINK_CREATE_TIME_ as ILINK_CREATE_TIME_
       </if>
       <if test="firstResult != null and firstResult &gt;= 0">${limitOuterJoinBetween}</if>
@@ -470,7 +471,7 @@
       <if test="includeIdentityLinks">
         ,
         ILINK.ID_ as TEMPILINK_ID_, ILINK.TYPE_ as TEMPILINK_TYPE_, ILINK.USER_ID_ as TEMPILINK_USER_ID_,
-        ILINK.GROUP_ID_ as TEMPILINK_GROUP_ID_, ILINK.TASK_ID_ as TEMPILINK_TASK_ID_,
+        ILINK.GROUP_ID_ as TEMPILINK_GROUP_ID_,ILINK.ROLE_ID_ as TEMPILINK_ROLE_ID_, ILINK.TASK_ID_ as TEMPILINK_TASK_ID_,
         ILINK.PROC_INST_ID_ as TEMPILINK_PROC_INST_ID_, ILINK.CREATE_TIME_ as TEMPILINK_CREATE_TIME_
       </if>
     </if>
@@ -498,7 +499,7 @@
   </sql>
   
   <sql id="commonSelectHistoricTaskInstancesByQueryCriteriaSql">
-    <if test="candidateUser != null || candidateGroups != null">
+    <if test="candidateUser != null || candidateGroups != null || candidateRoles != null">
       inner join ${prefix}ACT_HI_IDENTITYLINK HI on HI.TASK_ID_ = RES.ID_
     </if>
     <if test="processFinished || processUnfinished || processInstanceBusinessKey != null || processInstanceBusinessKeyLike != null || processInstanceBusinessKeyLikeIgnoreCase != null">
@@ -526,7 +527,7 @@
       </if>       
     </foreach>
     <foreach collection="orQueryObjects" index="orIndex" item="orQueryObject">
-      <if test="orQueryObject.candidateUser != null || orQueryObject.candidateGroups != null">
+      <if test="orQueryObject.candidateUser != null || orQueryObject.candidateGroups != null || orQueryObject.candidateRoles != null">
         inner join ${prefix}ACT_HI_IDENTITYLINK HI_OR${orIndex} on HI_OR${orIndex}.TASK_ID_ = RES.ID_
       </if>
       <if test="orQueryObject.processFinished || orQueryObject.processUnfinished || orQueryObject.processInstanceBusinessKey != null || orQueryObject.processInstanceBusinessKeyLike != null || orQueryObject.processInstanceBusinessKeyLikeIgnoreCase != null">
@@ -799,7 +800,7 @@
       <if test="withoutTenantId">
         and (RES.TENANT_ID_ = '' or RES.TENANT_ID_ is null)
       </if>
-      <if test="candidateUser != null || candidateGroups != null">
+      <if test="candidateUser != null || candidateGroups != null|| candidateRoles != null">
         <if test="!ignoreAssigneeValue">
             and RES.ASSIGNEE_ is null
         </if>
@@ -809,9 +810,10 @@
           <if test="candidateUser != null">
             HI.USER_ID_ = #{candidateUser}
           </if>
-          <if test="candidateUser != null &amp;&amp; candidateGroups != null &amp;&amp; candidateGroups.size() &gt; 0">
-            or
-          </if>
+        <if test="(candidateUser != null &amp;&amp; candidateGroups != null &amp;&amp; candidateGroups.size() &gt; 0&amp;&amp;candidateRoles != null &amp;&amp; candidateRoles.size() &gt; 0)
+                ||((candidateUser != null &amp;&amp; candidateGroups != null &amp;&amp; candidateGroups.size() &gt; 0)&amp;&amp;(candidateRoles == null || candidateRoles.size() == 0))">
+          or
+        </if>
           <if test="candidateGroups != null &amp;&amp; candidateGroups.size() &gt; 0">
             HI.GROUP_ID_ IN
             <foreach item="group" index="index" collection="candidateGroups"
@@ -819,6 +821,19 @@
               #{group}
             </foreach>
           </if>
+        <if test="(candidateUser == null &amp;&amp;(candidateGroups != null &amp;&amp; candidateGroups.size() &gt; 0&amp;&amp;candidateRoles != null &amp;&amp; candidateRoles.size() &gt; 0))
+                ||(candidateGroups == null || candidateGroups.size() == 0)&amp;&amp;(candidateUser != null&amp;&amp;candidateRoles != null &amp;&amp;candidateRoles.size() &gt; 0)
+                ||(candidateUser != null &amp;&amp; candidateGroups != null &amp;&amp; candidateGroups.size() &gt; 0&amp;&amp;candidateRoles != null &amp;&amp; candidateRoles.size() &gt; 0)
+			    ">
+          or
+        </if>
+        <if test="candidateRoles != null &amp;&amp; candidateRoles.size() &gt; 0">
+          HI.ROLE_ID_ IN
+          <foreach item="role" index="index" collection="candidateRoles"
+                   open="(" separator="," close=")">
+            #{role}
+          </foreach>
+        </if>
         )
       </if>
       <if test="involvedUser != null">
@@ -1151,7 +1166,8 @@
           <if test="orQueryObject.withoutTenantId">
             or (RES.TENANT_ID_ = '' or RES.TENANT_ID_ is null)
           </if>
-          <if test="orQueryObject.candidateUser != null || orQueryObject.candidateGroups != null">
+          <if
+                  test="orQueryObject.candidateUser != null || orQueryObject.candidateGroups != null || orQueryObject.candidateRoles != null">
             or (HI_OR${orIndex}.TYPE_ = 'candidate'
             
             <if test="!orQueryObject.ignoreAssigneeValue">
@@ -1163,9 +1179,10 @@
               <if test="orQueryObject.candidateUser != null">
                 HI_OR${orIndex}.USER_ID_ = #{orQueryObject.candidateUser}
               </if>
-              <if test="orQueryObject.candidateUser != null &amp;&amp; orQueryObject.candidateGroups != null &amp;&amp; orQueryObject.candidateGroups.size() &gt; 0">
-                or
-              </if>
+            <if test="(orQueryObject.candidateUser != null &amp;&amp; orQueryObject.candidateGroups != null &amp;&amp; orQueryObject.candidateGroups.size() &gt; 0&amp;&amp;orQueryObject.candidateRoles != null &amp;&amp; orQueryObject.candidateRoles.size() &gt; 0)
+                ||((orQueryObject.candidateUser != null &amp;&amp; orQueryObject.candidateGroups != null &amp;&amp; orQueryObject.candidateGroups.size() &gt; 0)&amp;&amp;(orQueryObject.candidateRoles == null || orQueryObject.candidateRoles.size() == 0))">
+              or
+            </if>
               <if test="orQueryObject.candidateGroups != null &amp;&amp; orQueryObject.candidateGroups.size() &gt; 0">
                 HI_OR${orIndex}.GROUP_ID_ IN
                 <foreach item="group" index="index" collection="orQueryObject.candidateGroups"
@@ -1173,6 +1190,19 @@
                   #{group}
                 </foreach>
               </if>
+            <if test="(orQueryObject.candidateUser == null &amp;&amp;(orQueryObject.candidateGroups != null &amp;&amp; orQueryObject.candidateGroups.size() &gt; 0&amp;&amp;orQueryObject.candidateRoles != null &amp;&amp; orQueryObject.candidateRoles.size() &gt; 0))
+                ||(orQueryObject.candidateGroups == null || orQueryObject.candidateGroups.size() == 0)&amp;&amp;(orQueryObject.candidateUser != null&amp;&amp;orQueryObject.candidateRoles != null &amp;&amp;orQueryObject.candidateRoles.size() &gt; 0)
+                ||(orQueryObject.candidateUser != null &amp;&amp; orQueryObject.candidateGroups != null &amp;&amp; orQueryObject.candidateGroups.size() &gt; 0&amp;&amp;orQueryObject.candidateRoles != null &amp;&amp; orQueryObject.candidateRoles.size() &gt; 0)
+				">
+              or
+            </if>
+            <if test="orQueryObject.candidateRoles != null &amp;&amp; orQueryObject.candidateRoles.size() &gt; 0">
+              HI_OR${orIndex}.ROLE_ID_ IN
+              <foreach item="role" index="index" collection="orQueryObject.candidateRoles"
+                       open="(" separator="," close=")">
+                #{role}
+              </foreach>
+            </if>
             ))
           </if>
           <if test="orQueryObject.involvedUser != null">

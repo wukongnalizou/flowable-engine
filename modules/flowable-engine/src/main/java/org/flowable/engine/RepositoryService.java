@@ -437,6 +437,15 @@ public interface RepositoryService {
     void addCandidateStarterGroup(String processDefinitionId, String groupId);
 
     /**
+      * Removes the authorization of a candidate role for a process definition.
+      *
+      * @param processDefinitionId id of the process definition, cannot be null.
+      * @param roleId              id of the role involve, cannot be null.
+      * @throws FlowableObjectNotFoundException when the process definition or role doesn't exist.
+      */
+    void addCandidateStarterRole(String processDefinitionId, String roleId);
+
+    /**
      * Removes the authorization of a candidate user for a process definition.
      * 
      * @param processDefinitionId
@@ -459,7 +468,20 @@ public interface RepositoryService {
      *             when the process definition or group doesn't exist.
      */
     void deleteCandidateStarterGroup(String processDefinitionId, String groupId);
-
+    
+    
+    /**
+      * Removes the authorization of a candidate role for a process definition.
+      * 
+      * @param processDefinitionId
+      *            id of the process definition, cannot be null.
+      * @param roleId
+      *            id of the role involve, cannot be null.
+      * @throws FlowableObjectNotFoundException
+      *             when the process definition or group doesn't  
+     */
+    void deleteCandidateStarterRole(String processDefinitionId, String roleId);
+    
     /**
      * Retrieves the {@link IdentityLink}s associated with the given process definition. Such an {@link IdentityLink} informs how a certain identity (eg. group or user) is authorized for a certain
      * process definition

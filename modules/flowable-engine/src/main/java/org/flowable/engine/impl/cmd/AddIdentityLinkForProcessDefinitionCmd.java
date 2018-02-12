@@ -12,8 +12,6 @@
  */
 package org.flowable.engine.impl.cmd;
 
-import java.io.Serializable;
-
 import org.flowable.engine.common.api.FlowableIllegalArgumentException;
 import org.flowable.engine.common.api.FlowableObjectNotFoundException;
 import org.flowable.engine.common.impl.interceptor.Command;
@@ -24,6 +22,8 @@ import org.flowable.engine.impl.util.CommandContextUtil;
 import org.flowable.engine.impl.util.Flowable5Util;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.identitylink.service.impl.persistence.entity.IdentityLinkEntity;
+
+import java.io.Serializable;
 
 /**
  * @author Tijs Rademakers
@@ -38,11 +38,14 @@ public class AddIdentityLinkForProcessDefinitionCmd implements Command<Void>, Se
 
     protected String groupId;
 
-    public AddIdentityLinkForProcessDefinitionCmd(String processDefinitionId, String userId, String groupId) {
+    protected String roleId;
+
+    public AddIdentityLinkForProcessDefinitionCmd(String processDefinitionId, String userId, String groupId, String roleId) {
         validateParams(userId, groupId, processDefinitionId);
         this.processDefinitionId = processDefinitionId;
         this.userId = userId;
         this.groupId = groupId;
+        this.roleId = roleId;
     }
 
     protected void validateParams(String userId, String groupId, String processDefinitionId) {
@@ -50,8 +53,8 @@ public class AddIdentityLinkForProcessDefinitionCmd implements Command<Void>, Se
             throw new FlowableIllegalArgumentException("processDefinitionId is null");
         }
 
-        if (userId == null && groupId == null) {
-            throw new FlowableIllegalArgumentException("userId and groupId cannot both be null");
+        if (userId == null && groupId == null && roleId == null) {
+            throw new FlowableIllegalArgumentException("userId and groupId and roleId cannot both be null");
         }
     }
 
@@ -69,7 +72,8 @@ public class AddIdentityLinkForProcessDefinitionCmd implements Command<Void>, Se
             return null;
         }
 
-        IdentityLinkEntity identityLinkEntity = CommandContextUtil.getIdentityLinkService().createProcessDefinitionIdentityLink(processDefinition.getId(), userId, groupId);
+        IdentityLinkEntity identityLinkEntity = CommandContextUtil.getIdentityLinkService()
+                .createProcessDefinitionIdentityLink(processDefinition.getId(), userId, groupId, roleId);
         processDefinition.getIdentityLinks().add(identityLinkEntity);
 
         return null;

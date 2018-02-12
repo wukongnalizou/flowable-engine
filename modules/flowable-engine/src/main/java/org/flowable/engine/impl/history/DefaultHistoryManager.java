@@ -13,10 +13,6 @@
 
 package org.flowable.engine.impl.history;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import org.flowable.engine.common.api.delegate.event.FlowableEngineEventType;
 import org.flowable.engine.common.api.delegate.event.FlowableEventDispatcher;
 import org.flowable.engine.common.impl.history.HistoryLevel;
@@ -38,6 +34,10 @@ import org.flowable.task.service.impl.persistence.entity.TaskEntity;
 import org.flowable.variable.service.impl.persistence.entity.VariableInstanceEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Manager class that centralises recording of all history-related operations that are originated from inside the engine.
@@ -353,6 +353,7 @@ public class DefaultHistoryManager extends AbstractHistoryManager {
             historicIdentityLinkEntity.setTaskId(identityLink.getTaskId());
             historicIdentityLinkEntity.setType(identityLink.getType());
             historicIdentityLinkEntity.setUserId(identityLink.getUserId());
+            historicIdentityLinkEntity.setRoleId(identityLink.getRoleId());
             historicIdentityLinkService.insertHistoricIdentityLink(historicIdentityLinkEntity, false);
         }
     }

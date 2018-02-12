@@ -283,7 +283,7 @@ public interface TaskService {
      *             when no task exists with the given id.
      */
     void completeTaskWithForm(String taskId, String formDefinitionId, String outcome,
-            Map<String, Object> variables, Map<String, Object> transientVariables);
+                              Map<String, Object> variables, Map<String, Object> transientVariables);
 
     /**
      * Called when the task is successfully executed, and the task form has been submitted.
@@ -302,7 +302,7 @@ public interface TaskService {
      *             when no task exists with the given id.
      */
     void completeTaskWithForm(String taskId, String formDefinitionId, String outcome,
-            Map<String, Object> variables, boolean localScope);
+                              Map<String, Object> variables, boolean localScope);
 
     /**
      * Gets a Form model instance of the task form of a specific task
@@ -369,6 +369,16 @@ public interface TaskService {
     void addCandidateGroup(String taskId, String groupId);
 
     /**
+     * Convenience shorthand for {@link #addRoleIdentityLink(String, String, String)}; with type
+     * {@link IdentityLinkType#CANDIDATE}
+     *
+     * @param taskId id of the task, cannot be null.
+     * @param roleId id of the role to use as candidate, cannot be null.
+     * @throws FlowableObjectNotFoundException when the task or role doesn't exist.
+     */
+    void addCandidateRole(String taskId, String roleId);
+
+    /**
      * Involves a user with a task. The type of identity link is defined by the given identityLinkType.
      * 
      * @param taskId
@@ -397,6 +407,16 @@ public interface TaskService {
     void addGroupIdentityLink(String taskId, String groupId, String identityLinkType);
 
     /**
+     * Involves a role with a task. The type of identityLink is defined by the given identityLink.
+     *
+     * @param taskId           id of the task, cannot be null.
+     * @param roleId           id of the role to involve, cannot be null.
+     * @param identityLinkType type of identity, cannot be null (@see {@link IdentityLinkType}).
+     * @throws FlowableObjectNotFoundException when the task or group doesn't exist.
+     */
+    void addRoleIdentityLink(String taskId, String roleId, String identityLinkType);
+
+    /**
      * Convenience shorthand for {@link #deleteUserIdentityLink(String, String, String)}; with type {@link IdentityLinkType#CANDIDATE}
      * 
      * @param taskId
@@ -419,6 +439,16 @@ public interface TaskService {
      *             when the task or group doesn't exist.
      */
     void deleteCandidateGroup(String taskId, String groupId);
+
+    /**
+     * Convenience shorthand for {@link #deleteRoleIdentityLink(String, String, String)}; with type
+     * {@link IdentityLinkType#CANDIDATE}
+     *
+     * @param taskId id of the task, cannot be null.
+     * @param roleId id of the role to use as candidate, cannot be null.
+     * @throws FlowableObjectNotFoundException when the task or role doesn't exist.
+     */
+    void deleteCandidateRole(String taskId, String roleId);
 
     /**
      * Removes the association between a user and a task for the given identityLinkType.
@@ -447,6 +477,16 @@ public interface TaskService {
      *             when the task or group doesn't exist.
      */
     void deleteGroupIdentityLink(String taskId, String groupId, String identityLinkType);
+
+    /**
+     * Removes the association between a role and a task for the given identityLinkType.
+     *
+     * @param taskId           id of the task, cannot be null.
+     * @param roleId           id of the role to involve, cannot be null.
+     * @param identityLinkType type of identity, cannot be null (@see {@link IdentityLinkType}).
+     * @throws FlowableObjectNotFoundException when the task or role doesn't exist.
+     */
+    void deleteRoleIdentityLink(String taskId, String roleId, String identityLinkType);
 
     /**
      * Changes the priority of the task.

@@ -12,14 +12,14 @@
  */
 package org.flowable.task.api;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
 import org.flowable.engine.common.api.FlowableIllegalArgumentException;
 import org.flowable.engine.common.api.query.Query;
 import org.flowable.identitylink.api.IdentityLink;
 import org.flowable.task.api.history.HistoricTaskInstanceQuery;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Interface containing shared methods between the {@link TaskQuery} and the {@link HistoricTaskInstanceQuery}.
@@ -156,6 +156,19 @@ public interface TaskInfoQuery<T extends TaskInfoQuery<?, ?>, V extends TaskInfo
      *             <code>null</code>.
      */
     T taskCandidateGroupIn(List<String> candidateGroups);
+
+    /**
+     * Only select tasks for which users in the given role are candidates.
+     */
+    T taskCandidateRole(String candidateRole);
+
+    /**
+     * Only select tasks for which the 'taskCandidateRole' is one of the given groups.
+     *
+     * @throws FlowableIllegalArgumentException When query is executed and {@link #taskCandidateGroup(String)} or {@link #taskCandidateUser(String)} has been executed on the query instance. When passed group list is empty or
+     *                                          <code>null</code>.
+     */
+    T taskCandidateRoleIn(List<String> candidateRoles);
 
     /**
      * Only select tasks that have the given tenant id.
@@ -331,6 +344,7 @@ public interface TaskInfoQuery<T extends TaskInfoQuery<?, ?>, V extends TaskInfo
      * @throws FlowableIllegalArgumentException
      *             When passed category list is empty or <code>null</code> or contains <code>null String</code>.
      * @param processCategoryInList
+     * @throws FlowableIllegalArgumentException When passed category list is empty or <code>null</code> or contains <code>null String</code>.
      */
     T processCategoryIn(List<String> processCategoryInList);
 
@@ -340,6 +354,7 @@ public interface TaskInfoQuery<T extends TaskInfoQuery<?, ?>, V extends TaskInfo
      * @throws FlowableIllegalArgumentException
      *             When passed category list is empty or <code>null</code> or contains <code>null String</code>.
      * @param processCategoryNotInList
+     * @throws FlowableIllegalArgumentException When passed category list is empty or <code>null</code> or contains <code>null String</code>.
      */
     T processCategoryNotIn(List<String> processCategoryNotInList);
 

@@ -12,8 +12,6 @@
  */
 package org.flowable.engine.impl.cmd;
 
-import java.io.Serializable;
-
 import org.flowable.engine.common.api.FlowableIllegalArgumentException;
 import org.flowable.engine.common.api.FlowableObjectNotFoundException;
 import org.flowable.engine.common.impl.interceptor.Command;
@@ -24,6 +22,8 @@ import org.flowable.engine.impl.persistence.entity.ExecutionEntityManager;
 import org.flowable.engine.impl.util.CommandContextUtil;
 import org.flowable.engine.impl.util.Flowable5Util;
 import org.flowable.engine.impl.util.IdentityLinkUtil;
+
+import java.io.Serializable;
 
 /**
  * @author Marcus Klimstra
@@ -39,17 +39,21 @@ public class AddIdentityLinkForProcessInstanceCmd implements Command<Void>, Seri
 
     protected String groupId;
 
+    protected String roleId;
+
     protected String type;
 
-    public AddIdentityLinkForProcessInstanceCmd(String processInstanceId, String userId, String groupId, String type) {
-        validateParams(processInstanceId, userId, groupId, type);
+    public AddIdentityLinkForProcessInstanceCmd(String processInstanceId, String userId, String groupId, String roleId,
+                                                String type) {
+        validateParams(processInstanceId, userId, groupId, roleId, type);
         this.processInstanceId = processInstanceId;
         this.userId = userId;
         this.groupId = groupId;
+        this.roleId = roleId;
         this.type = type;
     }
 
-    protected void validateParams(String processInstanceId, String userId, String groupId, String type) {
+    protected void validateParams(String processInstanceId, String userId, String groupId, String roleId, String type) {
 
         if (processInstanceId == null) {
             throw new FlowableIllegalArgumentException("processInstanceId is null");
@@ -59,7 +63,7 @@ public class AddIdentityLinkForProcessInstanceCmd implements Command<Void>, Seri
             throw new FlowableIllegalArgumentException("type is required when adding a new process instance identity link");
         }
 
-        if (userId == null && groupId == null) {
+        if (userId == null && groupId == null && roleId == null) {
             throw new FlowableIllegalArgumentException("userId and groupId cannot both be null");
         }
 
@@ -81,7 +85,7 @@ public class AddIdentityLinkForProcessInstanceCmd implements Command<Void>, Seri
             return null;
         }
 
-        IdentityLinkUtil.createProcessInstanceIdentityLink(processInstance, userId, groupId, type);
+        IdentityLinkUtil.createProcessInstanceIdentityLink(processInstance, userId, groupId, roleId, type);
         CommandContextUtil.getHistoryManager(commandContext).createProcessInstanceIdentityLinkComment(processInstanceId, userId, groupId, type, true);
 
         return null;

@@ -43,6 +43,10 @@ public class UserTaskPropertiesParser extends BasePropertiesParser {
         putPropertyValue(BPMN_MODEL_VALUE, userTask.getCandidateGroups(), candidateGroupsNode);
         putPropertyValue(DYNAMIC_VALUE, flowElementNode.path(USER_TASK_CANDIDATE_GROUPS), candidateGroupsNode);
 
+        ObjectNode candidateRolesNode = objectMapper.createObjectNode();
+        putPropertyValue(BPMN_MODEL_VALUE, userTask.getCandidateRoles(), candidateRolesNode);
+        putPropertyValue(DYNAMIC_VALUE, flowElementNode.path(USER_TASK_CANDIDATE_ROLES), candidateRolesNode);
+
         ObjectNode propertiesNode = objectMapper.createObjectNode();
         propertiesNode.set(USER_TASK_NAME, taskNameNode);
         propertiesNode.set(USER_TASK_ASSIGNEE, assigneeNode);

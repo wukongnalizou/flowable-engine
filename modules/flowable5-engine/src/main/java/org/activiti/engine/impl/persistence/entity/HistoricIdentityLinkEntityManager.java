@@ -54,7 +54,8 @@ public class HistoricIdentityLinkEntityManager extends AbstractManager {
     }
 
     @SuppressWarnings("unchecked")
-    public List<HistoricIdentityLinkEntity> findHistoricIdentityLinkByTaskUserGroupAndType(String taskId, String userId, String groupId, String type) {
+    public List<HistoricIdentityLinkEntity> findHistoricIdentityLinkByTaskUserGroupAndType(String taskId, String
+            userId, String groupId, String roleId, String type) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("taskId", taskId);
         parameters.put("userId", userId);

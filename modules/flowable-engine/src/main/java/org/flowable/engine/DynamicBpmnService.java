@@ -86,6 +86,10 @@ public interface DynamicBpmnService {
 
     void changeUserTaskCandidateGroup(String id, String candidateGroup, boolean overwriteOtherChangedEntries, ObjectNode infoNode);
 
+    ObjectNode changeUserTaskCandidateRole(String id, String candidateRole, boolean overwriteOtherChangedEntries);
+
+    void changeUserTaskCandidateRole(String id, String candidateRole, boolean overwriteOtherChangedEntries, ObjectNode infoNode);
+
     /**
      * Creates a new processDefinitionInfo with {@link DynamicBpmnConstants#USER_TASK_CANDIDATE_USERS} for the given BPMN element.
      *
@@ -149,6 +153,10 @@ public interface DynamicBpmnService {
      *            the current processDefinitionInfo. This object will be modified.
      */
     void changeUserTaskCandidateGroups(String id, List<String> candidateGroups, ObjectNode infoNode);
+
+    ObjectNode changeUserTaskCandidateRoles(String id, List<String> candidateRoles);
+
+    void changeUserTaskCandidateRoles(String id, List<String> candidateRoles, ObjectNode infoNode);
     
     ObjectNode changeMultiInstanceCompletionCondition(String id, String completionCondition);
 

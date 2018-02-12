@@ -82,6 +82,7 @@ public class UserTaskActivityBehavior extends TaskActivityBehavior {
         String activeTaskOwner = null;
         List<String> activeTaskCandidateUsers = null;
         List<String> activeTaskCandidateGroups = null;
+        List<String> activeTaskCandidateRoles = null;
 
         ProcessEngineConfigurationImpl processEngineConfiguration = CommandContextUtil.getProcessEngineConfiguration(commandContext);
         ExpressionManager expressionManager = processEngineConfiguration.getExpressionManager();
@@ -99,6 +100,8 @@ public class UserTaskActivityBehavior extends TaskActivityBehavior {
             activeTaskOwner = getActiveValue(userTask.getOwner(), DynamicBpmnConstants.USER_TASK_OWNER, taskElementProperties);
             activeTaskCandidateUsers = getActiveValueList(userTask.getCandidateUsers(), DynamicBpmnConstants.USER_TASK_CANDIDATE_USERS, taskElementProperties);
             activeTaskCandidateGroups = getActiveValueList(userTask.getCandidateGroups(), DynamicBpmnConstants.USER_TASK_CANDIDATE_GROUPS, taskElementProperties);
+            activeTaskCandidateRoles = getActiveValueList(userTask.getCandidateRoles(), DynamicBpmnConstants
+                    .USER_TASK_CANDIDATE_ROLES, taskElementProperties);
 
         } else {
             activeTaskName = userTask.getName();
@@ -112,6 +115,7 @@ public class UserTaskActivityBehavior extends TaskActivityBehavior {
             activeTaskOwner = userTask.getOwner();
             activeTaskCandidateUsers = userTask.getCandidateUsers();
             activeTaskCandidateGroups = userTask.getCandidateGroups();
+            activeTaskCandidateRoles = userTask.getCandidateRoles();
         }
 
         if (StringUtils.isNotEmpty(activeTaskName)) {
@@ -210,8 +214,9 @@ public class UserTaskActivityBehavior extends TaskActivityBehavior {
         // Handling assignments need to be done after the task is inserted, to have an id
         if (!skipUserTask) {
             handleAssignments(taskService, activeTaskAssignee, activeTaskOwner,
-                    activeTaskCandidateUsers, activeTaskCandidateGroups, task, expressionManager, execution);
-            
+                    activeTaskCandidateUsers, activeTaskCandidateGroups,activeTaskCandidateRoles, task,
+                    expressionManager, execution);
+
             processEngineConfiguration.getListenerNotificationHelper().executeTaskListeners(task, TaskListener.EVENTNAME_CREATE);
 
             // All properties set, now firing 'create' events
@@ -238,9 +243,10 @@ public class UserTaskActivityBehavior extends TaskActivityBehavior {
         leave(execution);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected void handleAssignments(TaskService taskService, String assignee, String owner, List<String> candidateUsers,
-            List<String> candidateGroups, TaskEntity task, ExpressionManager expressionManager, DelegateExecution execution) {
+                                     List<String> candidateGroups,List<String> candidateRoles, TaskEntity task,
+                                     ExpressionManager expressionManager, DelegateExecution execution) {
 
         if (StringUtils.isNotEmpty(assignee)) {
             Object assigneeExpressionValue = expressionManager.createExpression(assignee).getValue(execution);
@@ -289,7 +295,30 @@ public class UserTaskActivityBehavior extends TaskActivityBehavior {
                 }
             }
         }
-
+        if (candidateRoles != null && !candidateRoles.isEmpty()) {
+            for (String candidateRole : candidateRoles) {
+                Expression roleIdExpr = expressionManager.createExpression(candidateRole);
+                Object value = roleIdExpr.getValue(execution);
+                if (value != null) {
+                    if (value instanceof String) {
+                        String strValue = (String) value;
+                        if (StringUtils.isNotEmpty(strValue)) {
+                            List<String> candidates = extractCandidates(strValue);
+                            List<IdentityLinkEntity> identityLinkEntities = CommandContextUtil.getIdentityLinkService
+                                    ().addCandidateRoles(task.getId(), candidates);
+                            IdentityLinkUtil.handleTaskIdentityLinkAdditions(task, identityLinkEntities);
+                        }
+                        
+                    } else if (value instanceof Collection) {
+                        List<IdentityLinkEntity> identityLinkEntities = CommandContextUtil.getIdentityLinkService().addCandidateRoles(task.getId(), (Collection) value);
+                        IdentityLinkUtil.handleTaskIdentityLinkAdditions(task, identityLinkEntities);
+                        
+                    } else {
+                        throw new FlowableIllegalArgumentException("Expression did not resolve to a string or collection of strings");
+                    }
+                }
+            }
+        }
         if (candidateUsers != null && !candidateUsers.isEmpty()) {
             for (String candidateUser : candidateUsers) {
                 Expression userIdExpr = expressionManager.createExpression(candidateUser);
@@ -302,11 +331,11 @@ public class UserTaskActivityBehavior extends TaskActivityBehavior {
                             List<IdentityLinkEntity> identityLinkEntities = CommandContextUtil.getIdentityLinkService().addCandidateUsers(task.getId(), candidates);
                             IdentityLinkUtil.handleTaskIdentityLinkAdditions(task, identityLinkEntities);
                         }
-                        
+
                     } else if (value instanceof Collection) {
                         List<IdentityLinkEntity> identityLinkEntities = CommandContextUtil.getIdentityLinkService().addCandidateUsers(task.getId(), (Collection) value);
                         IdentityLinkUtil.handleTaskIdentityLinkAdditions(task, identityLinkEntities);
-                        
+
                     } else {
                         throw new FlowableException("Expression did not resolve to a string or collection of strings");
                     }
@@ -323,16 +352,17 @@ public class UserTaskActivityBehavior extends TaskActivityBehavior {
                     if (value instanceof String) {
                         List<String> userIds = extractCandidates((String) value);
                         for (String userId : userIds) {
-                            IdentityLinkEntity identityLinkEntity = CommandContextUtil.getIdentityLinkService().createTaskIdentityLink(task.getId(), userId, null, customUserIdentityLinkType);
+                            IdentityLinkEntity identityLinkEntity = CommandContextUtil.getIdentityLinkService().createTaskIdentityLink(task.getId(), userId, null, null, customUserIdentityLinkType);
                             IdentityLinkUtil.handleTaskIdentityLinkAddition(task, identityLinkEntity);
                         }
                     } else if (value instanceof Collection) {
                         Iterator userIdSet = ((Collection) value).iterator();
                         while (userIdSet.hasNext()) {
                             IdentityLinkEntity identityLinkEntity = CommandContextUtil.getIdentityLinkService().createTaskIdentityLink(
-                                            task.getId(), (String) userIdSet.next(), null, customUserIdentityLinkType);
+                                    task.getId(), (String) userIdSet.next(), null, null, customUserIdentityLinkType);
                             IdentityLinkUtil.handleTaskIdentityLinkAddition(task, identityLinkEntity);
                         }
+                        
                     } else {
                         throw new FlowableException("Expression did not resolve to a string or collection of strings");
                     }
@@ -353,14 +383,45 @@ public class UserTaskActivityBehavior extends TaskActivityBehavior {
                         List<String> groupIds = extractCandidates((String) value);
                         for (String groupId : groupIds) {
                             IdentityLinkEntity identityLinkEntity = CommandContextUtil.getIdentityLinkService().createTaskIdentityLink(
-                                            task.getId(), null, groupId, customGroupIdentityLinkType);
+                                    task.getId(), null, groupId, null, customGroupIdentityLinkType);
                             IdentityLinkUtil.handleTaskIdentityLinkAddition(task, identityLinkEntity);
                         }
                     } else if (value instanceof Collection) {
                         Iterator groupIdSet = ((Collection) value).iterator();
                         while (groupIdSet.hasNext()) {
                             IdentityLinkEntity identityLinkEntity = CommandContextUtil.getIdentityLinkService().createTaskIdentityLink(
-                                            task.getId(), null, (String) groupIdSet.next(), customGroupIdentityLinkType);
+                                    task.getId(), null, (String) groupIdSet.next(), null, customGroupIdentityLinkType);
+                            IdentityLinkUtil.handleTaskIdentityLinkAddition(task, identityLinkEntity);
+                        }
+                        
+                    } else {
+                        throw new FlowableException("Expression did not resolve to a string or collection of strings");
+                    }
+
+                }
+            }
+
+        }
+
+        if (userTask.getCustomRoleIdentityLinks() != null && !userTask.getCustomRoleIdentityLinks().isEmpty()) {
+
+            for (String customRoleIdentityLinkType : userTask.getCustomRoleIdentityLinks().keySet()) {
+                for (String roleIdentityLink : userTask.getCustomRoleIdentityLinks().get(customRoleIdentityLinkType)) {
+
+                    Expression idExpression = expressionManager.createExpression(roleIdentityLink);
+                    Object value = idExpression.getValue(execution);
+                    if (value instanceof String) {
+                        List<String> roleIds = extractCandidates((String) value);
+                        for (String roleId : roleIds) {
+                            IdentityLinkEntity identityLinkEntity = CommandContextUtil.getIdentityLinkService().createTaskIdentityLink(
+                                    task.getId(), null, null, roleId, customRoleIdentityLinkType);
+                            IdentityLinkUtil.handleTaskIdentityLinkAddition(task, identityLinkEntity);
+                        }
+                    } else if (value instanceof Collection) {
+                        Iterator roleIdSet = ((Collection) value).iterator();
+                        while (roleIdSet.hasNext()) {
+                            IdentityLinkEntity identityLinkEntity = CommandContextUtil.getIdentityLinkService().createTaskIdentityLink(
+                                    task.getId(), null, null, (String) roleIdSet.next(), customRoleIdentityLinkType);
                             IdentityLinkUtil.handleTaskIdentityLinkAddition(task, identityLinkEntity);
                         }
                     } else {

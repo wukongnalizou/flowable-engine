@@ -12,10 +12,10 @@
  */
 package org.flowable.identitylink.service.impl.persistence.entity.data;
 
-import java.util.List;
-
 import org.flowable.engine.common.impl.persistence.entity.data.DataManager;
 import org.flowable.identitylink.service.impl.persistence.entity.IdentityLinkEntity;
+
+import java.util.List;
 
 /**
  * @author Joram Barrez
@@ -28,11 +28,11 @@ public interface IdentityLinkDataManager extends DataManager<IdentityLinkEntity>
 
     List<IdentityLinkEntity> findIdentityLinksByProcessDefinitionId(String processDefinitionId);
 
-    List<IdentityLinkEntity> findIdentityLinkByTaskUserGroupAndType(String taskId, String userId, String groupId, String type);
+    List<IdentityLinkEntity> findIdentityLinkByTaskUserGroupRoleAndType(String taskId, String userId, String groupId, String roleId, String type);
+    
+    List<IdentityLinkEntity> findIdentityLinkByProcessInstanceUserGroupRoleAndType(String processInstanceId, String userId, String groupId, String roleId, String type);
 
-    List<IdentityLinkEntity> findIdentityLinkByProcessInstanceUserGroupAndType(String processInstanceId, String userId, String groupId, String type);
-
-    List<IdentityLinkEntity> findIdentityLinkByProcessDefinitionUserAndGroup(String processDefinitionId, String userId, String groupId);
+    List<IdentityLinkEntity> findIdentityLinkByProcessDefinitionUserAndGroupAndRole(String processDefinitionId, String userId, String groupId, String roleId);
 
     void deleteIdentityLinksByProcDef(String processDefId);
 

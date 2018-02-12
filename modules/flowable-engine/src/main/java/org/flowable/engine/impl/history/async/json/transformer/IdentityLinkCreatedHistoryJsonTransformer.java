@@ -43,6 +43,7 @@ public class IdentityLinkCreatedHistoryJsonTransformer extends AbstractHistoryJs
         historicIdentityLinkEntity.setTaskId(getStringFromJson(historicalData, HistoryJsonConstants.TASK_ID));
         historicIdentityLinkEntity.setType(getStringFromJson(historicalData, HistoryJsonConstants.IDENTITY_LINK_TYPE));
         historicIdentityLinkEntity.setUserId(getStringFromJson(historicalData, HistoryJsonConstants.USER_ID));
+        historicIdentityLinkEntity.setRoleId(getStringFromJson(historicalData, HistoryJsonConstants.ROLE_ID));
         historicIdentityLinkService.insertHistoricIdentityLink(historicIdentityLinkEntity, false);
     }
 

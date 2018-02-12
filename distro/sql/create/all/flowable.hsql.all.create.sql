@@ -27,6 +27,7 @@ create table ACT_RU_IDENTITYLINK (
     GROUP_ID_ varchar(255),
     TYPE_ varchar(255),
     USER_ID_ varchar(255),
+    ROLE_ID_ varchar(64),
     TASK_ID_ varchar(64),
     PROC_INST_ID_ varchar(64) null,
     PROC_DEF_ID_ varchar(64),
@@ -35,6 +36,7 @@ create table ACT_RU_IDENTITYLINK (
 
 create index ACT_IDX_IDENT_LNK_USER on ACT_RU_IDENTITYLINK(USER_ID_);
 create index ACT_IDX_IDENT_LNK_GROUP on ACT_RU_IDENTITYLINK(GROUP_ID_);
+create index ACT_IDX_IDENT_LNK_ROLE on ACT_RU_IDENTITYLINK(ROLE_ID_);
 
 insert into ACT_GE_PROPERTY values ('identitylink.schema.version', '6.2.1.0', 1);
 create table ACT_RU_TASK (
@@ -594,6 +596,7 @@ create table ACT_HI_IDENTITYLINK (
   GROUP_ID_ varchar(255),
   TYPE_ varchar(255),
   USER_ID_ varchar(255),
+  ROLE_ID_ varchar(64),
   TASK_ID_ varchar(64),
   CREATE_TIME_ timestamp,
   PROC_INST_ID_ varchar(64) null,

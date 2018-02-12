@@ -137,6 +137,8 @@ public interface HistoryJsonConstants {
     
     String GROUP_ID = "groupId";
 
+    String ROLE_ID = "roleId";
+
     String TENANT_ID = "tenantId";
     
     String CALLBACK_ID = "callbackId";

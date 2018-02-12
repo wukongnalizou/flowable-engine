@@ -31,6 +31,13 @@ public interface IdentityLinkInfo {
     String getGroupId();
 
     /**
+     * If the identity link involves a role, then this will be a non-null id of a role. That roleId can be used to
+     * query for user information through the RoleQuery API.
+     * addBy  zhangjl
+     */
+    String getRoleId();
+
+    /**
      * The id of the task associated with this identity link.
      */
     String getTaskId();

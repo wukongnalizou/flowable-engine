@@ -39,18 +39,21 @@ public class DeleteIdentityLinkCmd extends NeedsActiveTaskCmd<Void> {
 
     protected String groupId;
 
+    protected String roleId;
+
     protected String type;
 
-    public DeleteIdentityLinkCmd(String taskId, String userId, String groupId, String type) {
+    public DeleteIdentityLinkCmd(String taskId, String userId, String groupId, String roleId, String type) {
         super(taskId);
-        validateParams(userId, groupId, type, taskId);
+        validateParams(userId, groupId, roleId, type, taskId);
         this.taskId = taskId;
         this.userId = userId;
         this.groupId = groupId;
+        this.roleId = roleId;
         this.type = type;
     }
 
-    protected void validateParams(String userId, String groupId, String type, String taskId) {
+    protected void validateParams(String userId, String groupId, String roleId, String type, String taskId) {
         if (taskId == null) {
             throw new FlowableIllegalArgumentException("taskId is null");
         }
@@ -65,7 +68,7 @@ public class DeleteIdentityLinkCmd extends NeedsActiveTaskCmd<Void> {
                 throw new FlowableIllegalArgumentException("Incompatible usage: cannot use type '" + type + "' together with a groupId");
             }
         } else {
-            if (userId == null && groupId == null) {
+            if (userId == null && groupId == null && roleId == null) {
                 throw new FlowableIllegalArgumentException("userId and groupId cannot both be null");
             }
         }
@@ -84,7 +87,7 @@ public class DeleteIdentityLinkCmd extends NeedsActiveTaskCmd<Void> {
         } else if (IdentityLinkType.OWNER.equals(type)) {
             TaskHelper.changeTaskOwner(task, null);
         } else {
-            IdentityLinkUtil.deleteTaskIdentityLinks(task, userId, groupId, type);
+            IdentityLinkUtil.deleteTaskIdentityLinks(task, userId, groupId, roleId, type);
         }
 
         CommandContextUtil.getHistoryManager(commandContext).createIdentityLinkComment(taskId, userId, groupId, type, false);

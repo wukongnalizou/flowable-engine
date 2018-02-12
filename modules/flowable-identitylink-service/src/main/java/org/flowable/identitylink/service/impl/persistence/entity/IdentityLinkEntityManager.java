@@ -12,6 +12,8 @@
  */
 package org.flowable.identitylink.service.impl.persistence.entity;
 
+import org.flowable.engine.common.impl.persistence.entity.EntityManager;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -27,18 +29,19 @@ public interface IdentityLinkEntityManager extends EntityManager<IdentityLinkEnt
     List<IdentityLinkEntity> findIdentityLinksByProcessInstanceId(String processInstanceId);
 
     List<IdentityLinkEntity> findIdentityLinksByProcessDefinitionId(String processDefinitionId);
+    
+    List<IdentityLinkEntity> findIdentityLinkByTaskUserGroupRoleAndType(String taskId, String userId, String groupId, String roleId, String type);
 
-    List<IdentityLinkEntity> findIdentityLinkByTaskUserGroupAndType(String taskId, String userId, String groupId, String type);
+    List<IdentityLinkEntity> findIdentityLinkByProcessInstanceUserGroupRoleAndType(String processInstanceId, String userId, String groupId, String roleId, String type);
 
-    List<IdentityLinkEntity> findIdentityLinkByProcessInstanceUserGroupAndType(String processInstanceId, String userId, String groupId, String type);
+    List<IdentityLinkEntity> findIdentityLinkByProcessDefinitionUserAndGroupAndRole(String processDefinitionId, String userId, String groupId, String roleId);
+   
+    IdentityLinkEntity addProcessInstanceIdentityLink(String processInstanceId, String userId, String groupId, String
+            roleId, String type);
 
-    List<IdentityLinkEntity> findIdentityLinkByProcessDefinitionUserAndGroup(String processDefinitionId, String userId, String groupId);
+    IdentityLinkEntity addTaskIdentityLink(String taskId, String userId, String groupId, String roleId, String type);
 
-    IdentityLinkEntity addProcessInstanceIdentityLink(String processInstanceId, String userId, String groupId, String type);
-
-    IdentityLinkEntity addTaskIdentityLink(String taskId, String userId, String groupId, String type);
-
-    IdentityLinkEntity addProcessDefinitionIdentityLink(String processDefinitionId, String userId, String groupId);
+    IdentityLinkEntity addProcessDefinitionIdentityLink(String processDefinitionId, String userId, String groupId, String roleId);
 
     IdentityLinkEntity addCandidateUser(String taskId, String userId);
 
@@ -50,14 +53,19 @@ public interface IdentityLinkEntityManager extends EntityManager<IdentityLinkEnt
 
     void deleteIdentityLink(IdentityLinkEntity identityLink);
 
-    List<IdentityLinkEntity> deleteProcessInstanceIdentityLink(String processInstanceId, String userId, String groupId, String type);
+    List<IdentityLinkEntity> deleteProcessInstanceIdentityLink(String processInstanceId, String userId, String groupId, String roleId, String type);
 
-    List<IdentityLinkEntity> deleteTaskIdentityLink(String taskId, List<IdentityLinkEntity> currentIdentityLinks, String userId, String groupId, String type);
+    List<IdentityLinkEntity> deleteTaskIdentityLink(String taskId, List<IdentityLinkEntity> currentIdentityLinks, String userId, String groupId, String roleId, String type);
 
-    List<IdentityLinkEntity> deleteProcessDefinitionIdentityLink(String processDefinitionId, String userId, String groupId);
+    List<IdentityLinkEntity> deleteProcessDefinitionIdentityLink(String processDefinitionId, String userId, String groupId, String roleId);
 
     List<IdentityLinkEntity> deleteIdentityLinksByTaskId(String taskId);
 
     void deleteIdentityLinksByProcDef(String processDefId);
+    
+    IdentityLinkEntity addCandidateRole(String taskId, String roleId);
+
+    List<IdentityLinkEntity> addCandidateRoles(String taskId, Collection<String> candidateRoles);
+    
 
 }

@@ -24,11 +24,15 @@ public interface IdentityLinkEntity extends IdentityLink, Entity {
 
     boolean isGroup();
 
+    boolean isRole();
+
     void setType(String type);
 
     void setUserId(String userId);
 
     void setGroupId(String groupId);
+
+    void setRoleId(String roleId);
 
     void setTaskId(String taskId);
 

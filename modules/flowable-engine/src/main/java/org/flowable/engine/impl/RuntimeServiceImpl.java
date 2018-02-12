@@ -412,42 +412,74 @@ public class RuntimeServiceImpl extends ServiceImpl implements RuntimeService {
 
     @Override
     public void addUserIdentityLink(String processInstanceId, String userId, String identityLinkType) {
-        commandExecutor.execute(new AddIdentityLinkForProcessInstanceCmd(processInstanceId, userId, null, identityLinkType));
+        commandExecutor.execute(new AddIdentityLinkForProcessInstanceCmd(processInstanceId, userId, null, null,
+                identityLinkType));
     }
 
     @Override
     public void addGroupIdentityLink(String processInstanceId, String groupId, String identityLinkType) {
-        commandExecutor.execute(new AddIdentityLinkForProcessInstanceCmd(processInstanceId, null, groupId, identityLinkType));
+        commandExecutor.execute(new AddIdentityLinkForProcessInstanceCmd(processInstanceId, null, groupId, null,
+                identityLinkType));
+    }
+
+    @Override
+    public void addRoleIdentityLink(String processInstanceId, String roleId, String identityLinkType) {
+        commandExecutor.execute(new AddIdentityLinkForProcessInstanceCmd(processInstanceId, null, null, roleId,
+                identityLinkType));
     }
 
     @Override
     public void addParticipantUser(String processInstanceId, String userId) {
-        commandExecutor.execute(new AddIdentityLinkForProcessInstanceCmd(processInstanceId, userId, null, IdentityLinkType.PARTICIPANT));
+        commandExecutor.execute(new AddIdentityLinkForProcessInstanceCmd(processInstanceId, userId, null, null,
+                IdentityLinkType.PARTICIPANT));
     }
 
     @Override
     public void addParticipantGroup(String processInstanceId, String groupId) {
-        commandExecutor.execute(new AddIdentityLinkForProcessInstanceCmd(processInstanceId, null, groupId, IdentityLinkType.PARTICIPANT));
+        commandExecutor.execute(new AddIdentityLinkForProcessInstanceCmd(processInstanceId, null, groupId, null,
+                IdentityLinkType.PARTICIPANT));
+    }
+
+    @Override
+    public void addParticipantRole(String processInstanceId, String roleId) {
+        commandExecutor.execute(new AddIdentityLinkForProcessInstanceCmd(processInstanceId, null, null, roleId,
+                IdentityLinkType.PARTICIPANT));
     }
 
     @Override
     public void deleteParticipantUser(String processInstanceId, String userId) {
-        commandExecutor.execute(new DeleteIdentityLinkForProcessInstanceCmd(processInstanceId, userId, null, IdentityLinkType.PARTICIPANT));
+        commandExecutor.execute(new DeleteIdentityLinkForProcessInstanceCmd(processInstanceId, userId, null, null,
+                IdentityLinkType.PARTICIPANT));
     }
 
     @Override
     public void deleteParticipantGroup(String processInstanceId, String groupId) {
-        commandExecutor.execute(new DeleteIdentityLinkForProcessInstanceCmd(processInstanceId, null, groupId, IdentityLinkType.PARTICIPANT));
+        commandExecutor.execute(new DeleteIdentityLinkForProcessInstanceCmd(processInstanceId, null, groupId, null,
+                IdentityLinkType.PARTICIPANT));
+    }
+
+    @Override
+    public void deleteParticipantRole(String processInstanceId, String roleId) {
+        commandExecutor.execute(new DeleteIdentityLinkForProcessInstanceCmd(processInstanceId, null, null, roleId,
+                IdentityLinkType.PARTICIPANT));
     }
 
     @Override
     public void deleteUserIdentityLink(String processInstanceId, String userId, String identityLinkType) {
-        commandExecutor.execute(new DeleteIdentityLinkForProcessInstanceCmd(processInstanceId, userId, null, identityLinkType));
+        commandExecutor.execute(new DeleteIdentityLinkForProcessInstanceCmd(processInstanceId, userId, null, null,
+                identityLinkType));
     }
 
     @Override
     public void deleteGroupIdentityLink(String processInstanceId, String groupId, String identityLinkType) {
-        commandExecutor.execute(new DeleteIdentityLinkForProcessInstanceCmd(processInstanceId, null, groupId, identityLinkType));
+        commandExecutor.execute(new DeleteIdentityLinkForProcessInstanceCmd(processInstanceId, null, groupId,
+                null, identityLinkType));
+    }
+
+    @Override
+    public void deleteRoleIdentityLink(String processInstanceId, String roleId, String identityLinkType) {
+        commandExecutor.execute(new DeleteIdentityLinkForProcessInstanceCmd(processInstanceId, null, null,
+                roleId, identityLinkType));
     }
 
     @Override

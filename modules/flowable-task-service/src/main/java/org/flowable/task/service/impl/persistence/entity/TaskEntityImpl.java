@@ -12,17 +12,6 @@
  */
 package org.flowable.task.service.impl.persistence.entity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.flowable.engine.common.api.FlowableException;
 import org.flowable.engine.common.impl.context.Context;
 import org.flowable.engine.common.impl.db.SuspensionState;
@@ -39,6 +28,9 @@ import org.flowable.task.service.impl.util.CountingTaskUtil;
 import org.flowable.variable.service.impl.persistence.entity.VariableInitializingList;
 import org.flowable.variable.service.impl.persistence.entity.VariableInstanceEntity;
 import org.flowable.variable.service.impl.persistence.entity.VariableScopeImpl;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * @author Tom Baeyens
@@ -283,13 +275,13 @@ public class TaskEntityImpl extends VariableScopeImpl implements TaskEntity, Cou
     @Override
     public void addUserIdentityLink(String userId, String identityLinkType) {
         IdentityLinkEntityManager identityLinkEntityManager = CommandContextUtil.getIdentityLinkEntityManager();
-        identityLinkEntityManager.addTaskIdentityLink(this.id, userId, null, identityLinkType);
+        identityLinkEntityManager.addTaskIdentityLink(this.id, userId, null, null, identityLinkType);
     }
 
     @Override
     public void addGroupIdentityLink(String groupId, String identityLinkType) {
         IdentityLinkEntityManager identityLinkEntityManager = CommandContextUtil.getIdentityLinkEntityManager();
-        identityLinkEntityManager.addTaskIdentityLink(this.id, null, groupId, identityLinkType);
+        identityLinkEntityManager.addTaskIdentityLink(this.id, null, groupId, null, identityLinkType);
     }
 
     @Override
@@ -305,13 +297,15 @@ public class TaskEntityImpl extends VariableScopeImpl implements TaskEntity, Cou
     @Override
     public void deleteUserIdentityLink(String userId, String identityLinkType) {
         IdentityLinkEntityManager identityLinkEntityManager = CommandContextUtil.getIdentityLinkEntityManager();
-        identityLinkEntityManager.deleteTaskIdentityLink(this.id, getIdentityLinks(), userId, null, identityLinkType);
+        identityLinkEntityManager.deleteTaskIdentityLink(this.id, getIdentityLinks(), userId, null, null,
+                identityLinkType);
     }
     
     @Override
     public void deleteGroupIdentityLink(String groupId, String identityLinkType) {
         IdentityLinkEntityManager identityLinkEntityManager = CommandContextUtil.getIdentityLinkEntityManager();
-        identityLinkEntityManager.deleteTaskIdentityLink(this.id, getIdentityLinks(), null, groupId,identityLinkType);
+        identityLinkEntityManager.deleteTaskIdentityLink(this.id, getIdentityLinks(), null, groupId, null,
+                identityLinkType);
     }
 
     @Override
@@ -548,7 +542,7 @@ public class TaskEntityImpl extends VariableScopeImpl implements TaskEntity, Cou
     @Override
     public void addCandidateUsers(Collection<String> candidateUsers) {
         IdentityLinkEntityManager identityLinkEntityManager = CommandContextUtil.getIdentityLinkEntityManager();
-        identityLinkEntityManager.addCandidateUsers(this.id, candidateUsers);        
+        identityLinkEntityManager.addCandidateUsers(this.id, candidateUsers);
     }
     
     @Override

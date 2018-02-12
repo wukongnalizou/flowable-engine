@@ -7,12 +7,14 @@
   <!-- INSERT IDENTITY LINK -->
   
   <insert id="insertIdentityLink" parameterType="org.flowable.identitylink.service.impl.persistence.entity.IdentityLinkEntityImpl">
-    insert into ${prefix}ACT_RU_IDENTITYLINK (ID_, REV_, TYPE_, USER_ID_, GROUP_ID_, TASK_ID_, PROC_INST_ID_, PROC_DEF_ID_)
+    insert into ${prefix}ACT_RU_IDENTITYLINK (ID_, REV_, TYPE_, USER_ID_, GROUP_ID_,ROLE_ID_, TASK_ID_, PROC_INST_ID_, 
+    PROC_DEF_ID_)
     values (#{id, jdbcType=VARCHAR},
             1,
             #{type, jdbcType=VARCHAR},
             #{userId, jdbcType=VARCHAR},
             #{groupId, jdbcType=VARCHAR},
+            #{roleId, jdbcType=VARCHAR},
             #{taskId, jdbcType=VARCHAR},
             #{processInstanceId, jdbcType=VARCHAR},
             #{processDefId, jdbcType=VARCHAR})
@@ -20,7 +22,8 @@
   </insert>
   
   <insert id="bulkInsertIdentityLink" parameterType="org.flowable.identitylink.service.impl.persistence.entity.IdentityLinkEntityImpl">
-    insert into ${prefix}ACT_RU_IDENTITYLINK (ID_, REV_, TYPE_, USER_ID_, GROUP_ID_, TASK_ID_, PROC_INST_ID_, PROC_DEF_ID_)
+    insert into ${prefix}ACT_RU_IDENTITYLINK (ID_, REV_, TYPE_, USER_ID_, GROUP_ID_,ROLE_ID_,TASK_ID_, PROC_INST_ID_, 
+      PROC_DEF_ID_)
     values 
     <foreach collection="list" item="identityLink" index="index" separator=","> 
       (#{identityLink.id, jdbcType=VARCHAR},
@@ -28,6 +31,7 @@
         #{identityLink.type, jdbcType=VARCHAR},
         #{identityLink.userId, jdbcType=VARCHAR},
         #{identityLink.groupId, jdbcType=VARCHAR},
+        #{identityLink.roleId, jdbcType=VARCHAR},
         #{identityLink.taskId, jdbcType=VARCHAR},
         #{identityLink.processInstanceId, jdbcType=VARCHAR},
         #{identityLink.processDefId, jdbcType=VARCHAR})
@@ -37,12 +41,14 @@
   <insert id="bulkInsertIdentityLink" databaseId="oracle" parameterType="org.flowable.identitylink.service.impl.persistence.entity.IdentityLinkEntityImpl">
     INSERT ALL
       <foreach collection="list" item="identityLink" index="index">
-        into ${prefix}ACT_RU_IDENTITYLINK (ID_, REV_, TYPE_, USER_ID_, GROUP_ID_, TASK_ID_, PROC_INST_ID_, PROC_DEF_ID_) VALUES
+        into ${prefix}ACT_RU_IDENTITYLINK (ID_, REV_, TYPE_, USER_ID_, GROUP_ID_,ROLE_ID_,TASK_ID_, PROC_INST_ID_, 
+          PROC_DEF_ID_) VALUES
            (#{identityLink.id, jdbcType=VARCHAR},
             1,
             #{identityLink.type, jdbcType=VARCHAR},
             #{identityLink.userId, jdbcType=VARCHAR},
             #{identityLink.groupId, jdbcType=VARCHAR},
+            #{identityLink.roleId, jdbcType=VARCHAR},
             #{identityLink.taskId, jdbcType=VARCHAR},
             #{identityLink.processInstanceId, jdbcType=VARCHAR},
             #{identityLink.processDefId, jdbcType=VARCHAR})
@@ -75,6 +81,7 @@
     <result property="type" column="TYPE_" jdbcType="VARCHAR" />
     <result property="userId" column="USER_ID_" jdbcType="VARCHAR" />
     <result property="groupId" column="GROUP_ID_" jdbcType="VARCHAR" />
+      <result property="roleId" column="ROLE_ID_" jdbcType="VARCHAR"/>
     <result property="taskId" column="TASK_ID_" jdbcType="VARCHAR" />
     <result property="processInstanceId" column="PROC_INST_ID_" jdbcType="VARCHAR" />    
     <result property="processDefId" column="PROC_DEF_ID_" jdbcType="VARCHAR" />    
@@ -112,6 +119,9 @@
       <if test="parameter.groupId != null">
         and GROUP_ID_ = #{parameter.groupId}
       </if>
+      <if test="parameter.roleId != null">
+          and ROLE_ID_ = #{parameter.roleId}
+      </if>
       <if test="parameter.type != null">
         and TYPE_ = #{parameter.type}
       </if>
@@ -127,6 +137,9 @@
       <if test="parameter.groupId != null">
         and GROUP_ID_ = #{parameter.groupId}
       </if>
+       <if test="parameter.roleId != null">
+           and ROLE_ID_ = #{parameter.roleId}
+       </if>
       <if test="parameter.type != null">
         and TYPE_ = #{parameter.type}
       </if>
@@ -141,6 +154,9 @@
       </if>
       <if test="parameter.groupId != null">
         and GROUP_ID_ = #{parameter.groupId}
+      </if>
+      <if test="parameter.roleId != null">
+          and ROLE_ID_ = #{parameter.roleId}
       </if>
   </select>
   

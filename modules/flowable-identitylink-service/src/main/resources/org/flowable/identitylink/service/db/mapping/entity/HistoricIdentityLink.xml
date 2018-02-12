@@ -21,24 +21,28 @@
    <!-- INSERT HISTORIC IDENTITY LINK -->
   
   <insert id="insertHistoricIdentityLink" parameterType="org.flowable.identitylink.service.impl.persistence.entity.HistoricIdentityLinkEntityImpl">
-    insert into ${prefix}ACT_HI_IDENTITYLINK (ID_, TYPE_, USER_ID_, GROUP_ID_, TASK_ID_, PROC_INST_ID_, CREATE_TIME_)
+    insert into ${prefix}ACT_HI_IDENTITYLINK (ID_, TYPE_, USER_ID_, GROUP_ID_, ROLE_ID_, TASK_ID_, PROC_INST_ID_, 
+    CREATE_TIME_)
     values (#{id, jdbcType=VARCHAR},
             #{type, jdbcType=VARCHAR},
             #{userId, jdbcType=VARCHAR},
             #{groupId, jdbcType=VARCHAR},
+            #{roleId, jdbcType=VARCHAR},
             #{taskId, jdbcType=VARCHAR},
             #{processInstanceId, jdbcType=VARCHAR},
             #{createTime, jdbcType=TIMESTAMP})
   </insert>
   
   <insert id="bulkInsertHistoricIdentityLink" parameterType="java.util.List">
-    insert into ${prefix}ACT_HI_IDENTITYLINK (ID_, TYPE_, USER_ID_, GROUP_ID_, TASK_ID_, PROC_INST_ID_, CREATE_TIME_)
+    insert into ${prefix}ACT_HI_IDENTITYLINK (ID_, TYPE_, USER_ID_, GROUP_ID_, ROLE_ID_, TASK_ID_, PROC_INST_ID_, 
+      CREATE_TIME_)
     values 
       <foreach collection="list" item="historicIdentityLink" index="index" separator=",">
         (#{historicIdentityLink.id, jdbcType=VARCHAR},
          #{historicIdentityLink.type, jdbcType=VARCHAR},
          #{historicIdentityLink.userId, jdbcType=VARCHAR},
          #{historicIdentityLink.groupId, jdbcType=VARCHAR},
+         #{historicIdentityLink.roleId, jdbcType=VARCHAR},
          #{historicIdentityLink.taskId, jdbcType=VARCHAR},
          #{historicIdentityLink.processInstanceId, jdbcType=VARCHAR},
          #{historicIdentityLink.createTime, jdbcType=TIMESTAMP})
@@ -48,11 +52,14 @@
   <insert id="bulkInsertHistoricIdentityLink" databaseId="oracle" parameterType="java.util.List">
     INSERT ALL 
       <foreach collection="list" item="historicIdentityLink" index="index">
-        INTO ${prefix}ACT_HI_IDENTITYLINK (ID_, TYPE_, USER_ID_, GROUP_ID_, TASK_ID_, PROC_INST_ID_, CREATE_TIME_) VALUES 
+        INTO ${prefix}ACT_HI_IDENTITYLINK (ID_, TYPE_, USER_ID_, GROUP_ID_, ROLE_ID_, TASK_ID_, PROC_INST_ID_, 
+          CREATE_TIME_) 
+          VALUES 
           (#{historicIdentityLink.id, jdbcType=VARCHAR},
            #{historicIdentityLink.type, jdbcType=VARCHAR},
            #{historicIdentityLink.userId, jdbcType=VARCHAR},
            #{historicIdentityLink.groupId, jdbcType=VARCHAR},
+           #{historicIdentityLink.roleId, jdbcType=VARCHAR},
            #{historicIdentityLink.taskId, jdbcType=VARCHAR},
            #{historicIdentityLink.processInstanceId, jdbcType=VARCHAR},
            #{historicIdentityLink.createTime, jdbcType=TIMESTAMP})
@@ -80,6 +87,7 @@
     <result property="type" column="TYPE_" jdbcType="VARCHAR" />
     <result property="userId" column="USER_ID_" jdbcType="VARCHAR" />
     <result property="groupId" column="GROUP_ID_" jdbcType="VARCHAR" />
+      <result property="roleId" column="ROLE_ID_" jdbcType="VARCHAR"/>
     <result property="taskId" column="TASK_ID_" jdbcType="VARCHAR" />
     <result property="processInstanceId" column="PROC_INST_ID_" jdbcType="VARCHAR" />
     <result property="createTime" column="CREATE_TIME_" jdbcType="TIMESTAMP" />       
@@ -112,6 +120,9 @@
       </if>
       <if test="parameter.groupId != null">
         and GROUP_ID_ = #{parameter.groupId}
+      </if>        
+      <if test="parameter.roleId != null">
+      and ROLE_ID_ = #{parameter.roleId}
       </if>
       <if test="parameter.type != null">
         and TYPE_ = #{parameter.type}

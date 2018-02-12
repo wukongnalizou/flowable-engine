@@ -320,22 +320,33 @@ public class RepositoryServiceImpl extends ServiceImpl implements RepositoryServ
 
     @Override
     public void addCandidateStarterUser(String processDefinitionId, String userId) {
-        commandExecutor.execute(new AddIdentityLinkForProcessDefinitionCmd(processDefinitionId, userId, null));
+        commandExecutor.execute(new AddIdentityLinkForProcessDefinitionCmd(processDefinitionId, userId, null, null));
     }
 
     @Override
     public void addCandidateStarterGroup(String processDefinitionId, String groupId) {
-        commandExecutor.execute(new AddIdentityLinkForProcessDefinitionCmd(processDefinitionId, null, groupId));
+        commandExecutor.execute(new AddIdentityLinkForProcessDefinitionCmd(processDefinitionId, null, groupId, null));
+    }
+
+    @Override
+    public void addCandidateStarterRole(String processDefinitionId, String roleId) {
+        commandExecutor.execute(new AddIdentityLinkForProcessDefinitionCmd(processDefinitionId, null, null, roleId));
+
     }
 
     @Override
     public void deleteCandidateStarterGroup(String processDefinitionId, String groupId) {
-        commandExecutor.execute(new DeleteIdentityLinkForProcessDefinitionCmd(processDefinitionId, null, groupId));
+        commandExecutor.execute(new DeleteIdentityLinkForProcessDefinitionCmd(processDefinitionId, null, groupId, null));
     }
 
     @Override
     public void deleteCandidateStarterUser(String processDefinitionId, String userId) {
-        commandExecutor.execute(new DeleteIdentityLinkForProcessDefinitionCmd(processDefinitionId, userId, null));
+        commandExecutor.execute(new DeleteIdentityLinkForProcessDefinitionCmd(processDefinitionId, userId, null, null));
+    }
+
+    @Override
+    public void deleteCandidateStarterRole(String processDefinitionId, String roleId) {
+        commandExecutor.execute(new DeleteIdentityLinkForProcessDefinitionCmd(processDefinitionId, null, null, roleId));
     }
 
     @Override

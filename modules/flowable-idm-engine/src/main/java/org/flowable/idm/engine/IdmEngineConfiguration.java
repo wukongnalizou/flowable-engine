@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.proper.enterprise.platform.core.PEPApplicationContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.flowable.engine.common.AbstractEngineConfiguration;
@@ -43,10 +44,7 @@ import org.flowable.idm.api.IdmManagementService;
 import org.flowable.idm.api.PasswordEncoder;
 import org.flowable.idm.api.PasswordSalt;
 import org.flowable.idm.api.event.FlowableIdmEventType;
-import org.flowable.idm.engine.impl.IdmEngineImpl;
-import org.flowable.idm.engine.impl.IdmIdentityServiceImpl;
-import org.flowable.idm.engine.impl.IdmManagementServiceImpl;
-import org.flowable.idm.engine.impl.ServiceImpl;
+import org.flowable.idm.engine.impl.*;
 import org.flowable.idm.engine.impl.authentication.BlankSalt;
 import org.flowable.idm.engine.impl.authentication.ClearTextPasswordEncoder;
 import org.flowable.idm.engine.impl.cfg.StandaloneIdmEngineConfiguration;
@@ -105,7 +103,7 @@ public class IdmEngineConfiguration extends AbstractEngineConfiguration {
     // SERVICES
     // /////////////////////////////////////////////////////////////////
 
-    protected IdmIdentityService idmIdentityService = new IdmIdentityServiceImpl();
+    protected IdmIdentityService idmIdentityService;
     protected IdmManagementService idmManagementService = new IdmManagementServiceImpl();
 
     // DATA MANAGERS ///////////////////////////////////////////////////
@@ -211,6 +209,7 @@ public class IdmEngineConfiguration extends AbstractEngineConfiguration {
     // /////////////////////////////////////////////////////////////////
 
     protected void initServices() {
+        this.idmIdentityService=extIdm ? new PEPIdmIdentityServiceImpl() : new IdmIdentityServiceImpl();
         initService(idmIdentityService);
         initService(idmManagementService);
     }

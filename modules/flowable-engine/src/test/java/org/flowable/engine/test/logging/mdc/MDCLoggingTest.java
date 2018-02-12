@@ -12,10 +12,6 @@
  */
 package org.flowable.engine.test.logging.mdc;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-
 import org.apache.log4j.Appender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -23,6 +19,10 @@ import org.apache.log4j.PatternLayout;
 import org.flowable.engine.impl.test.PluggableFlowableTestCase;
 import org.flowable.engine.logging.LogMDC;
 import org.flowable.engine.test.Deployment;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 public class MDCLoggingTest extends PluggableFlowableTestCase {
 
