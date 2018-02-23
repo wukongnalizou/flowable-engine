@@ -1,7 +1,7 @@
 package org.flowable.app.model.common;
 
 
-import com.proper.enterprise.platform.api.auth.model.Role;
+import org.flowable.idm.api.Role;
 
 public class RoleRepresentation {
     protected String id;

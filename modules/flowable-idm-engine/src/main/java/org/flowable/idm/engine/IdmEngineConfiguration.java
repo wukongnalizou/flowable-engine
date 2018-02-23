@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import com.proper.enterprise.platform.core.PEPApplicationContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.flowable.engine.common.AbstractEngineConfiguration;
@@ -37,7 +35,6 @@ import org.flowable.engine.common.impl.interceptor.SessionFactory;
 import org.flowable.engine.common.impl.persistence.GenericManagerFactory;
 import org.flowable.engine.common.impl.persistence.cache.EntityCache;
 import org.flowable.engine.common.impl.persistence.cache.EntityCacheImpl;
-import org.flowable.engine.common.impl.persistence.entity.Entity;
 import org.flowable.engine.common.runtime.Clock;
 import org.flowable.idm.api.IdmIdentityService;
 import org.flowable.idm.api.IdmManagementService;
@@ -103,7 +100,7 @@ public class IdmEngineConfiguration extends AbstractEngineConfiguration {
     // SERVICES
     // /////////////////////////////////////////////////////////////////
 
-    protected IdmIdentityService idmIdentityService;
+    protected IdmIdentityService idmIdentityService = new IdmIdentityServiceImpl();
     protected IdmManagementService idmManagementService = new IdmManagementServiceImpl();
 
     // DATA MANAGERS ///////////////////////////////////////////////////
@@ -209,7 +206,6 @@ public class IdmEngineConfiguration extends AbstractEngineConfiguration {
     // /////////////////////////////////////////////////////////////////
 
     protected void initServices() {
-        this.idmIdentityService=extIdm ? new PEPIdmIdentityServiceImpl() : new IdmIdentityServiceImpl();
         initService(idmIdentityService);
         initService(idmManagementService);
     }

@@ -116,10 +116,5 @@
 			<groupId>com.proper.enterprise.platform</groupId>
 			<artifactId>flowable-engine-common-api</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.proper.enterprise.platform</groupId>
-			<artifactId>pep-auth-api</artifactId>
-			<version>0.4.0-SNAPSHOT</version>
-		</dependency>
 	</dependencies>
 </project>

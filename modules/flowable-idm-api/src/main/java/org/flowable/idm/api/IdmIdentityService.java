@@ -12,7 +12,6 @@
  */
 package org.flowable.idm.api;
 
-import com.proper.enterprise.platform.api.auth.model.Role;
 import org.flowable.engine.common.api.FlowableIllegalArgumentException;
 
 import java.util.List;

@@ -12,71 +12,88 @@
  */
 package org.flowable.app.service.idm;
 
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.proper.enterprise.platform.api.auth.model.Role;
-import com.proper.enterprise.platform.api.auth.model.User;
-import com.proper.enterprise.platform.api.auth.model.UserGroup;
-import com.proper.enterprise.platform.api.auth.service.RoleService;
-import com.proper.enterprise.platform.api.auth.service.UserGroupService;
-import com.proper.enterprise.platform.api.auth.service.UserService;
-import com.proper.enterprise.platform.core.entity.DataTrunk;
-import org.apache.commons.lang3.StringUtils;
-import org.flowable.app.model.common.*;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.flowable.app.model.common.RemoteGroup;
+import org.flowable.app.model.common.RemoteRole;
+import org.flowable.app.model.common.RemoteToken;
+import org.flowable.app.model.common.RemoteUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.*;
-
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class RemoteIdmServiceImpl implements RemoteIdmService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteIdmServiceImpl.class);
 
+    private static final String PROPERTY_URL = "idm.app.url";
+    private static final String PROPERTY_ADMIN_USER = "idm.admin.user";
+    private static final String PROPERTY_ADMIN_PASSWORD = "idm.admin.password";
 
     @Autowired
     protected Environment environment;
 
     @Autowired
     protected ObjectMapper objectMapper;
-    @Autowired
-    protected UserGroupService userGroupService;
-    @Autowired
-    protected UserService userService;
-    @Autowired
-    private RoleService roleService;
+
+    protected String url;
+    protected String adminUser;
+    protected String adminPassword;
+
+    @PostConstruct
+    protected void init() {
+        url = environment.getProperty(PROPERTY_URL);
+        adminUser = environment.getProperty(PROPERTY_ADMIN_USER);
+        adminPassword = environment.getProperty(PROPERTY_ADMIN_PASSWORD);
+    }
 
     @Override
     public RemoteUser authenticateUser(String username, String password) {
+        JsonNode json = callRemoteIdmService(url + "/api/idm/users/" + encode(username), username, password);
+        if (json != null) {
+            return parseUserInfo(json);
+        }
         return null;
     }
 
     @Override
     public RemoteToken getToken(String tokenValue) {
+        JsonNode json = callRemoteIdmService(url + "/api/idm/tokens/" + encode(tokenValue), adminUser, adminPassword);
+        if (json != null) {
+            RemoteToken token = new RemoteToken();
+            token.setId(json.get("id").asText());
+            token.setValue(json.get("value").asText());
+            token.setUserId(json.get("userId").asText());
+            return token;
+        }
         return null;
     }
 
     @Override
     public RemoteUser getUser(String userId) {
-        User user = userService.get(userId);
-        RemoteUser remoteUser = RemoteUserConvert.convert(user);
-        JsonNode json = null;
-        try {
-            json = objectMapper.readTree(objectMapper.writeValueAsString(remoteUser));
-        } catch (JsonProcessingException e) {
-            LOGGER.error("JsonProcessingException", e);
-        } catch (IOException e) {
-            LOGGER.error("IOException", e);
-        }
+        JsonNode json = callRemoteIdmService(url + "/api/idm/users/" + encode(userId), adminUser, adminPassword);
         if (json != null) {
             return parseUserInfo(json);
         }
@@ -85,17 +102,7 @@ public class RemoteIdmServiceImpl implements RemoteIdmService {
 
     @Override
     public List<RemoteUser> findUsersByNameFilter(String filter) {
-        DataTrunk<? extends User> dataTrunk = userService.getUsersByCondiction(filter, null, null, null, "Y", 1,
-                10);
-        List<RemoteUser> remoteUsers = RemoteUserConvert.convert(dataTrunk.getData());
-        JsonNode json = null;
-        try {
-            json = objectMapper.readTree(objectMapper.writeValueAsString(remoteUsers));
-        } catch (JsonProcessingException e) {
-            LOGGER.error("JsonProcessingException", e);
-        } catch (IOException e) {
-            LOGGER.error("IOException", e);
-        }
+        JsonNode json = callRemoteIdmService(url + "/api/idm/users?filter=" + encode(filter), adminUser, adminPassword);
         if (json != null) {
             return parseUsersInfo(json);
         }
@@ -104,26 +111,25 @@ public class RemoteIdmServiceImpl implements RemoteIdmService {
 
     @Override
     public List<RemoteUser> findUsersByGroup(String groupId) {
-        return null;
+        JsonNode json = callRemoteIdmService(url + "/api/idm/groups/" + encode(groupId) + "/users", adminUser, adminPassword);
+        if (json != null) {
+            return parseUsersInfo(json);
+        }
+        return new ArrayList<>();
     }
 
     @Override
     public RemoteGroup getGroup(String groupId) {
+        JsonNode json = callRemoteIdmService(url + "/api/idm/groups/" + encode(groupId), adminUser, adminPassword);
+        if (json != null) {
+            return parseGroupInfo(json);
+        }
         return null;
     }
 
     @Override
     public List<RemoteGroup> findGroupsByNameFilter(String filter) {
-        Collection<? extends UserGroup> userGroups = userGroupService.getGroups(filter, null, null);
-        List<RemoteGroup> remoteGroups = RemoteGroupConvert.convert(userGroups);
-        JsonNode json = null;
-        try {
-            json = objectMapper.readTree(objectMapper.writeValueAsString(remoteGroups));
-        } catch (JsonProcessingException e) {
-            LOGGER.error("JsonProcessingException", e);
-        } catch (IOException e) {
-            LOGGER.error("IOException", e);
-        }
+        JsonNode json = callRemoteIdmService(url + "/api/idm/groups?filter=" + encode(filter), adminUser, adminPassword);
         if (json != null) {
             return parseGroupsInfo(json);
         }
@@ -132,85 +138,44 @@ public class RemoteIdmServiceImpl implements RemoteIdmService {
 
     @Override
     public List<RemoteRole> getRolesByNameFilter(String filter) {
-        String roleNameFilter = filter;
-        if (StringUtils.isEmpty(roleNameFilter)) {
-            roleNameFilter = "%";
-        } else {
-            roleNameFilter = "%" + roleNameFilter + "%";
-        }
-        Collection roles = roleService.getAllSimilarRolesByName(roleNameFilter);
-        Iterator iterator = roles.iterator();
-        List<RemoteRole> list = new ArrayList<>();
-        while (iterator.hasNext()) {
-            Role role = (Role) iterator.next();
-            list.add(RemoteRoleConvert.convert(role));
-        }
-        return list;
+        return null;
     }
 
-    private static class RemoteRoleConvert {
-        public static RemoteRole convert(Role role) {
-            RemoteRole remoteRole = new RemoteRole();
-            if (null == role || StringUtils.isEmpty(role.getId())) {
-                return null;
-            }
-            remoteRole.setId(role.getId());
-            remoteRole.setName(role.getName());
-            return remoteRole;
-        }
-    }
+    protected JsonNode callRemoteIdmService(String url, String username, String password) {
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + new String(
+                Base64.encodeBase64((username + ":" + password).getBytes(Charset.forName("UTF-8")))));
 
-    private static class RemoteGroupConvert {
-        public static RemoteGroup convert(UserGroup userGroup) {
-            RemoteGroup remoteGroup = new RemoteGroup();
-            if (null == userGroup || StringUtils.isEmpty(userGroup.getId())) {
-                return null;
-            }
-            remoteGroup.setId(userGroup.getId());
-            remoteGroup.setName(userGroup.getName());
-            return remoteGroup;
+        HttpClientBuilder clientBuilder = HttpClientBuilder.create();
+        SSLConnectionSocketFactory sslsf = null;
+        try {
+            SSLContextBuilder builder = new SSLContextBuilder();
+            builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
+            sslsf = new SSLConnectionSocketFactory(builder.build(), NoopHostnameVerifier.INSTANCE);
+            clientBuilder.setSSLSocketFactory(sslsf);
+        } catch (Exception e) {
+            LOGGER.warn("Could not configure SSL for http client", e);
         }
 
+        CloseableHttpClient client = clientBuilder.build();
 
-        public static List<RemoteGroup> convert(Collection<? extends UserGroup> userGroups) {
-            List<RemoteGroup> remoteGroups = new ArrayList<>();
-            for (UserGroup userGroup : userGroups) {
-                RemoteGroup remoteGroup = convert(userGroup);
-                if (null == remoteGroup) {
-                    continue;
+        try {
+            HttpResponse response = client.execute(httpGet);
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                return objectMapper.readTree(response.getEntity().getContent());
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Exception while getting token", e);
+        } finally {
+            if (client != null) {
+                try {
+                    client.close();
+                } catch (IOException e) {
+                    LOGGER.warn("Exception while closing http client", e);
                 }
-                remoteGroups.add(remoteGroup);
             }
-            return remoteGroups;
         }
-    }
-
-    private static class RemoteUserConvert {
-        public static RemoteUser convert(User user) {
-            if (null == user || StringUtils.isEmpty(user.getId())) {
-                return null;
-            }
-            RemoteUser remoteUser = new RemoteUser();
-            remoteUser.setFirstName(user.getUsername());
-            remoteUser.setFullName(user.getUsername());
-            remoteUser.setGroups(RemoteGroupConvert.convert(user.getUserGroups()));
-            remoteUser.setId(user.getId());
-            remoteUser.setEmail(user.getEmail());
-            return remoteUser;
-        }
-
-
-        public static List<RemoteUser> convert(Collection<? extends User> users) {
-            List<RemoteUser> remoteUsers = new ArrayList<>();
-            for (User user : users) {
-                RemoteUser remoteUser = convert(user);
-                if (null == remoteUser) {
-                    continue;
-                }
-                remoteUsers.add(remoteUser);
-            }
-            return remoteUsers;
-        }
+        return null;
     }
 
     protected List<RemoteUser> parseUsersInfo(JsonNode json) {
