@@ -318,6 +318,7 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
 	}
 	
     var modelMetaData = editorManager.getBaseModelData();
+    $scope.editor = editorManager.getJSON();
 
     var description = '';
     if (modelMetaData.description) {
