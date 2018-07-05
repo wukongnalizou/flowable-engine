@@ -558,6 +558,18 @@ public class TaskEntityImpl extends VariableScopeImpl implements TaskEntity, Cou
     }
 
     @Override
+    public void addCandidateRole(String roleId) {
+        IdentityLinkEntityManager identityLinkEntityManager = CommandContextUtil.getIdentityLinkEntityManager();
+        identityLinkEntityManager.addCandidateRole(this.id, roleId);
+    }
+
+    @Override
+    public void addCandidateRoles(Collection<String> candidateRoles) {
+        IdentityLinkEntityManager identityLinkEntityManager = CommandContextUtil.getIdentityLinkEntityManager();
+        identityLinkEntityManager.addCandidateRoles(this.id, candidateRoles);
+    }
+
+    @Override
     public void setDelegationState(DelegationState delegationState) {
         this.delegationState = delegationState;
     }

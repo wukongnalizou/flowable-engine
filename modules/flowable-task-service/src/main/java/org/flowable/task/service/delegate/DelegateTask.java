@@ -116,6 +116,12 @@ public interface DelegateTask extends VariableScope {
     /** Adds multiple groups as candidate group to this task. */
     void addCandidateGroups(Collection<String> candidateGroups);
 
+    /** Adds the given role as candidate group to this task */
+    void addCandidateRole(String roleId);
+
+    /** Adds multiple role as candidate group to this task. */
+    void addCandidateRoles(Collection<String> candidateRoles);
+
     /** The {@link User.getId() userId} of the person responsible for this task. */
     String getOwner();
 
