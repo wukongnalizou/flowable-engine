@@ -23,6 +23,7 @@ task pack(type: Jar) {
         from 'src/main/webapp'
         exclude 'editor-app/configuration/properties/assignment-display-template.html'
         exclude 'editor-app/configuration/properties/assignment-popup.html'
+        exclude 'editor-app/configuration/properties/form-properties-popup.html'
         exclude 'editor-app/configuration/properties-assignment-controller.js'
         exclude 'editor-app/configuration/properties-form-properties-controller.js'
 
