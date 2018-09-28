@@ -20,7 +20,7 @@ FLOWABLE.TOOLBAR.ACTIONS.closeEditor =  function(services) {
             return;
         }
     }
-    FLOWABLE.TOOLBAR.ACTIONS.customClose(services.$location);
+    FLOWABLE.TOOLBAR.ACTIONS.customClose(services);
 };
 
 FLOWABLE.TOOLBAR.ACTIONS.navigateToProcess = function(processId) {
@@ -41,8 +41,8 @@ FLOWABLE.TOOLBAR_CONFIG.secondaryItems.push(
     }
 );
 
-FLOWABLE.TOOLBAR.ACTIONS.customClose =  function(loc) {
-    loc.path("/processes");
+FLOWABLE.TOOLBAR.ACTIONS.customClose =  function(services) {
+    services.$location.path("/processes");
 };
 
 
