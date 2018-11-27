@@ -318,6 +318,7 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
 	}
 	
     var modelMetaData = editorManager.getBaseModelData();
+    $scope.editor = editorManager.getJSON();
 
     var description = '';
     if (modelMetaData.description) {
@@ -351,7 +352,7 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                 	return;
             	}
         	}
-        	$location.path('/processes');
+        	FLOWABLE.TOOLBAR.ACTIONS.customClose($location);
     	});
     };
     
@@ -516,9 +517,9 @@ angular.module('flowableModeler').controller('ValidateModelCtrl',['$scope', '$ht
 			enableColumnMenus: false,
 			enableSorting: false,
             columnDefs: [
-                {field: 'activityName', displayName: 'Name', width:125},
-                {field: 'defaultDescription', displayName: 'Description'},
-                {field: 'warning', displayName: 'Critical', cellTemplate:'editor-app/configuration/properties/errorgrid-critical.html', width: 100}
+                {field: 'activityName', displayName: '名称', width:125},
+                {field: 'defaultDescription', displayName: '描述'},
+                {field: 'warning', displayName: '危险', cellTemplate:'editor-app/configuration/properties/errorgrid-critical.html', width: 100}
             ]
         };
         

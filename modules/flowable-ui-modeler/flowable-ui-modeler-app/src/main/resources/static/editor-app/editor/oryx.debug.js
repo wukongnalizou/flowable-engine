@@ -20354,7 +20354,7 @@ ORYX.Plugins.Save = Clazz.extend({
 	},
 	
 	_hasChanges: function() {
-	  return this.changeDifference !== 0 || (this.facade.getModelMetaData()['new'] && this.facade.getCanvas().getChildShapes().size() > 0);
+	  return this.changeDifference !== 0 || (this.facade.getModelMetaData() && this.facade.getModelMetaData()['new'] && this.facade.getCanvas().getChildShapes().size() > 0);
 	},
 	
 	onUnLoad: function(){

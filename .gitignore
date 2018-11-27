@@ -22,3 +22,6 @@ userguide-dmn/src/en/output
 userguide-form/src/en/output
 userguide-cmmn/src/en/output
 docker/all-in-one/assets
+
+.gradle/
+build/

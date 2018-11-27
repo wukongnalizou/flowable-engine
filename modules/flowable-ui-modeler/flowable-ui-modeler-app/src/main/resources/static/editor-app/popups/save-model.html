@@ -5,7 +5,7 @@
         <div class="modal-header">
             <h2>{{'MODEL.SAVE.TITLE' | translate}}</h2>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" wd-unify>
         	<div ng-if="saveDialog.errorMessage && saveDialog.errorMessage.length > 0" class="alert error" style="font-size: 14px; margin-top:20px">
                 <div class="popup-error" style="font-size: 14px">
                 	<span class="glyphicon glyphicon-remove-circle"></span>
@@ -15,7 +15,7 @@
         	<div class="form-group">
            		<label for="nameField">{{'MODEL.NAME' | translate}}</label>
         		<input type="text"
-                       ng-disabled="status.loading || (error && error.conflictResolveAction == 'saveAs')"
+                       ng-disabled="status.loading || readonly || (error && error.conflictResolveAction == 'saveAs')"
                        id="nameField"
                        class="form-control"
                        ng-model="saveDialog.name"
@@ -24,14 +24,14 @@
         	<div class="form-group">
            		<label for="keyField">{{'MODEL.KEY' | translate}}</label>
         		<input type="text"
-                       ng-disabled="status.loading || (error && error.conflictResolveAction == 'saveAs')"
+                       ng-disabled="status.loading || readonly || (error && error.conflictResolveAction == 'saveAs')"
                        id="keyField"
                        class="form-control"
                        ng-model="saveDialog.key" />
         	</div>
         	<div class="form-group">
            		<label for="docTextArea">{{'MODEL.DESCRIPTION' | translate}}</label>
-           		<textarea id="docTextArea" ng-disabled="status.loading" class="form-control" ng-model="saveDialog.description"></textarea>
+           		<textarea id="docTextArea" ng-disabled="status.loading || readonly" class="form-control" ng-model="saveDialog.description"></textarea>
         	</div>
         	<div class="checkbox" ng-show="!error && !error.isConflict">
            		<label>

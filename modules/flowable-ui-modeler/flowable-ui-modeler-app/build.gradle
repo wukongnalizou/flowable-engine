@@ -1,0 +1,60 @@
+allprojects {
+    repositories {
+        maven {
+            url "${nexusUrl}/repository/maven-public"
+            credentials(PasswordCredentials) {
+                username = nexusUsername
+                password = nexusPassword
+            }
+        }
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.proper.enterprise.platform'
+archivesBaseName = 'flowable-web-designer'
+version = '6.4.0-SNAPSHOT'
+
+task pack(type: Jar) {
+    metaInf {
+        into 'resources'
+        from 'src/main/resources/static'
+        exclude 'editor-app/configuration/properties/assignment-display-template.html'
+        exclude 'editor-app/configuration/properties/assignment-popup.html'
+        exclude 'editor-app/configuration/properties/form-properties-popup.html'
+        exclude 'editor-app/configuration/properties-assignment-controller.js'
+        exclude 'editor-app/configuration/properties-form-properties-controller.js'
+
+        exclude 'editor-app/configuration/toolbar-custom-actions.js'
+        exclude 'scripts/app-cfg.js'
+        exclude 'scripts/resource-loader.js'
+        exclude 'scripts/services/identity-services.js'
+    }
+    manifest {
+        attributes('Created-By': 'Gradle',
+                   'Specification-Title': 'Flowable Web Designer',
+                   'Specification-Version': version,
+                   'Implementation-Title': 'Flowable Web Designer from App',
+                   'Implementation-Version': version,
+                   'Implementation-URL': 'https://github.com/propersoft-cn/flowable-engine')
+    }
+}
+
+artifacts {
+    archives pack
+}
+compileJava.deleteAllActions()
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "${nexusUrl}/repository/maven-releases") {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+            snapshotRepository(url: "${nexusUrl}/repository/maven-snapshots") {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+        }
+    }
+}

@@ -58,11 +58,11 @@
 		      </div>
 		      <div id="process-treeview-wrapper" ng-controller="ProcessNavigatorController">
                     <div class="process-treeview-header">
-                        Process Navigator
+                        {{'PROPERTY.NAVIGATOR.NAME' | translate}}
                     </div>
                     <div class="process-treeview-body" ng-show="isEditorReady">
                         <div class="process-treeview-process-title" title="{{treeview.id}}" ng-class="{'current-process': treeview.current}" >
-                            Process: {{treeview.name}}
+                            {{'PROPERTY.NAVIGATOR.PROCESS.NAME' | translate}}: {{treeview.name}}
                             <img ng-show="!treeview.current" ng-src="editor-app/images/pencil.png" class="pull-right" ng-click="edit(treeview.id)" />
                         </div>
                         <ul class="process-treeview-list" ng-if="treeview.children">
@@ -70,7 +70,7 @@
                             </li>
                         </ul>
                         <div ng-if="!treeview.children || treeview.children.length == 0" style="padding-left: 5px;">
-                            No structural elements used.
+                            {{'PROPERTY.NAVIGATOR.PROCESS.STRUCTURAL.NO' | translate}}
                         </div>
                     </div>
               </div>
@@ -147,7 +147,7 @@
                                          ng-click="propertyClicked($index)" ng-class="{'clear' : $index%2 == 0}">
                                         <span class="title" ng-if="!property.hidden">{{ property.title }}&nbsp;:</span>
                                         <span class="title-removed" ng-if="property.hidden"><i>{{ property.title }}&nbsp;({{'PROPERTY.REMOVED' | translate}})&nbsp;:</i></span>
-                                        <span class="value">
+                                        <span class="value" [id]="property.key" id="{{property.key}}">
 	                                    <ng-include
                                                 src="getPropertyTemplateUrl($index)"
                                                 ng-if="!property.hasReadWriteMode"></ng-include>
