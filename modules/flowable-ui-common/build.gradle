@@ -1,0 +1,51 @@
+archivesBaseName = 'flowable-ui-common'
+
+ext {
+    versions = [:]
+}
+versions.flowable        = '6.4.0'
+versions.jackson         = '2.9.7'
+versions.spring          = '5.0.9.RELEASE'
+versions.spring_boot     = '2.0.5.RELEASE'
+versions.spring_security = '5.0.8.RELEASE'
+
+dependencies {
+    compile "org.flowable:flowable-spring-boot-autoconfigure:${versions.flowable}"
+
+    compile "org.springframework.boot:spring-boot-actuator-autoconfigure:${versions.spring_boot}",
+            "org.springframework.boot:spring-boot-starter:${versions.spring_boot}",
+            "org.springframework:spring-webmvc:${versions.spring}",
+            "org.springframework.security:spring-security-config:${versions.spring_security}",
+            "org.springframework.security:spring-security-web:${versions.spring_security}"
+            
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-json-org:${versions.jackson}",
+            "com.fasterxml.uuid:java-uuid-generator:3.1.5",
+            "com.google.guava:guava:26.0-jre",
+            "javax.servlet:javax.servlet-api:3.1.0",
+            "org.apache.httpcomponents:httpclient:4.5.6"
+}
+
+jar {
+    exclude 'org/flowable/ui/common/conf/DevelopmentConfiguration.class'
+    exclude 'org/flowable/ui/common/properties/FlowableRemoteIdmAutoConfiguration.class'
+
+    manifest {
+        attributes('Created-By': 'Gradle',
+                   'Specification-Title': 'Flowable UI Common',
+                   'Specification-Version': version,
+                   'Implementation-Title': 'Flowable UI Common',
+                   'Implementation-Version': version,
+                   'Implementation-URL': 'https://github.com/propersoft-cn/flowable-engine')
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+    exclude 'org/flowable/ui/common/conf/DevelopmentConfiguration.java'
+    exclude 'org/flowable/ui/common/properties/FlowableRemoteIdmAutoConfiguration.java'
+}
+
+artifacts {
+    archives sourcesJar
+}

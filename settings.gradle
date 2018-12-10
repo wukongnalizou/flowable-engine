@@ -1,1 +1,2 @@
 include 'modules/flowable-ui-modeler/flowable-ui-modeler-app'
+include 'modules/flowable-ui-common'

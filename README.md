@@ -54,13 +54,32 @@ After you've done that you can post questions and comments on http://forum.flowa
 There's a Jenkins server running the Flowable unit tests on http://qa.flowable.org.
 
 
-Proper Soft Branch
-==================
+Propersoft Branch
+=================
+
+This branch provides two customized JAR based on Flowable, they are:
+
+1. com.proper.enterprise.platform:flowable-ui-common:6.4.0-SNAPSHOT
+1. com.proper.enterprise.platform:flowable-web-designer:6.4.0-SNAPSHOT
+
+Use `Gradle` build system to pack these JAR files, and could upload new version using next commands:
+
+    # get a clean package
+    $ ./gradlew clean
+    # and then build and upload jar files
+    $ ./gradlew upload
+
+
+Customize flowable-ui-common
+----------------------------
+
+We don't want to use Flowable with Spring Security and develop it with mysql, so exclude these two configurations in `flowable-ui-common` Jar file.
+
 
 Pack web designer in jar
 ------------------------
 
-Use `Gradle` build system to pack Flowable front-end static resources from `flowable-ui-modeler-app` module into `flowable-web-designer-xxx.jar` as `Flowable Web Designer`.
+Pack Flowable front-end static resources from `flowable-ui-modeler-app` module into `flowable-web-designer-xxx.jar` as `Flowable Web Designer`.
 
 Static resources are packed under `META-INF/resources/` in the jar, which could be used as a dependency of the main web app.
 
@@ -68,10 +87,9 @@ Static resources are packed under `META-INF/resources/` in the jar, which could 
 
     # get a clean package
     $ ./gradlew clean pack
-    # and then upload jar
-    $ ./gradlew upload
 
 and you could find the `flowable-web-designer-xxx.jar` at `modules/flowable-ui-modeler/flowable-ui-modeler-app/build/libs`
+
 
 Current version
 ---------------

@@ -1,21 +1,4 @@
-allprojects {
-    repositories {
-        maven {
-            url "${nexusUrl}/repository/maven-public"
-            credentials(PasswordCredentials) {
-                username = nexusUsername
-                password = nexusPassword
-            }
-        }
-    }
-}
-
-apply plugin: 'java'
-apply plugin: 'maven'
-
-group = 'com.proper.enterprise.platform'
 archivesBaseName = 'flowable-web-designer'
-version = '6.4.0-SNAPSHOT'
 
 task pack(type: Jar) {
     metaInf {
@@ -46,15 +29,3 @@ artifacts {
     archives pack
 }
 compileJava.deleteAllActions()
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "${nexusUrl}/repository/maven-releases") {
-                authentication(userName: nexusUsername, password: nexusPassword)
-            }
-            snapshotRepository(url: "${nexusUrl}/repository/maven-snapshots") {
-                authentication(userName: nexusUsername, password: nexusPassword)
-            }
-        }
-    }
-}
