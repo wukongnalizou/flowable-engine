@@ -2,7 +2,7 @@ archivesBaseName = 'flowable-web-designer'
 
 task pack(type: Jar) {
     metaInf {
-        into 'resources'
+        into 'resources/designer'
         from 'src/main/resources/static'
         exclude 'editor-app/configuration/properties/assignment-display-template.html'
         exclude 'editor-app/configuration/properties/assignment-popup.html'
