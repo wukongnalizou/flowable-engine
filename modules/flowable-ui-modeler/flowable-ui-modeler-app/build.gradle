@@ -4,16 +4,16 @@ task pack(type: Jar) {
     metaInf {
         into 'resources/designer'
         from 'src/main/resources/static'
-        exclude 'editor-app/configuration/properties/assignment-display-template.html'
-        exclude 'editor-app/configuration/properties/assignment-popup.html'
-        exclude 'editor-app/configuration/properties/form-properties-popup.html'
-        exclude 'editor-app/configuration/properties-assignment-controller.js'
-        exclude 'editor-app/configuration/properties-form-properties-controller.js'
-
-        exclude 'editor-app/configuration/toolbar-custom-actions.js'
+//        exclude 'editor-app/configuration/properties/assignment-display-template.html'
+//        exclude 'editor-app/configuration/properties/assignment-popup.html'
+//        exclude 'editor-app/configuration/properties/form-properties-popup.html'
+//        exclude 'editor-app/configuration/properties-assignment-controller.js'
+//        exclude 'editor-app/configuration/properties-form-properties-controller.js'
+//
+//        exclude 'editor-app/configuration/toolbar-custom-actions.js'
         exclude 'scripts/app-cfg.js'
         exclude 'scripts/resource-loader.js'
-        exclude 'scripts/services/identity-services.js'
+//        exclude 'scripts/services/identity-services.js'
     }
     manifest {
         attributes('Created-By': 'Gradle',
