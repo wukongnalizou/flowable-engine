@@ -47,7 +47,7 @@ angular.module('flowableModeler').service('UserService', ['$http', '$q',
         };
 
     }]);
-
+//用户组搜索
 angular.module('flowableModeler').service('GroupService', ['$http', '$q',
     function ($http, $q) {
 
@@ -66,16 +66,51 @@ angular.module('flowableModeler').service('GroupService', ['$http', '$q',
         /*
          * Filter functional groups based on a filter text.
          */
-        this.getFilteredGroups = function (filterText) {
+        this.getFilteredGroups = function (filterText, filterType) {
             var params;
-            if(filterText) {
-                params = {filter: filterText};
+            if(filterText && filterType) {
+                params = 
+                {
+                    filter: filterText,
+                    type: filterType
+                };
             }
 
             return httpAsPromise({
                 method: 'GET',
-                url: FLOWABLE.APP_URL.getEditorGroupsUrl(),
+                url: FLOWABLE.APP_URL.getEditorGroupsUrl(params)
+            });
+        };
+    }]);
+    // option选项搜索
+angular.module('flowableModeler').service('assignService', ['$http', '$q',
+    function ($http, $q) {
+
+        var httpAsPromise = function(options) {
+            var deferred = $q.defer();
+            $http(options).
+                success(function (response, status, headers, config) {
+                    deferred.resolve(response);
+                })
+                .error(function (response, status, headers, config) {
+                    deferred.reject(response);
+                });
+            return deferred.promise;
+        };
+
+        /*
+         * Filter functional groups based on a filter text.
+         */
+        this.getFilterAssign = function (filterText) {
+            var params;
+            if(filterText) {
+                params = {filter: filterText};
+            }
+            return httpAsPromise({
+                method: 'GET',
+                url: FLOWABLE.APP_URL.getAssignGroup(),
                 params: params
             });
         };
     }]);
+    

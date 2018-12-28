@@ -351,8 +351,13 @@ angular.module('flowableModeler').controller('SaveModelCtrl', [ '$rootScope', '$
                     $location.path("/casemodels");
                 	return;
             	}
-        	}
-        	FLOWABLE.TOOLBAR.ACTIONS.customClose($location);
+            }
+            //解决公用关闭层级不一致
+            var parentObj = {
+                editorManager: editorManager
+            }
+            FLOWABLE.TOOLBAR.ACTIONS.customClose(parentObj);
+        	// FLOWABLE.TOOLBAR.ACTIONS.customClose($location);
     	});
     };
     

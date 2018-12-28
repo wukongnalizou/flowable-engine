@@ -231,13 +231,17 @@ FLOWABLE.APP_URL = {
     },
 
     /* OTHER URLS */
-
-    getEditorUsersUrl: function () {
-        return FLOWABLE.CONFIG.contextRoot + '/app/rest/editor-users';
+    //用户搜索地址
+    getAssignGroup: function () {
+        return FLOWABLE.CONFIG.contextRoot + '/ext/idm/conf';
     },
-
-    getEditorGroupsUrl: function () {
-        return FLOWABLE.CONFIG.contextRoot + '/app/rest/editor-groups';
+    //用户搜索地址
+    getEditorUsersUrl: function () {
+        return '/workflow/ext/modeler/assignee';
+    },
+    //候选组搜索地址及后添加
+    getEditorGroupsUrl: function (params) {
+        return '/workflow/ext/modeler/candidate/' + params.type + '?name=' + params.filter;
     },
 
     getAboutInfoUrl: function () {
