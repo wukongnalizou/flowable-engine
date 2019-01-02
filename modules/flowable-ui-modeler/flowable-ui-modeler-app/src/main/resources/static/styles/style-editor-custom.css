@@ -1,0 +1,8 @@
+.navbar-display-none {
+  min-height: 0 !important;
+  display: none !important;
+}
+
+.editor-main-padding {
+  padding-top:0 !important;
+}

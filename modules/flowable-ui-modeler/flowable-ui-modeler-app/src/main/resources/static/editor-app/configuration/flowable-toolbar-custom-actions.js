@@ -42,6 +42,7 @@ FLOWABLE.TOOLBAR_CONFIG.secondaryItems.push(
 );
 // 重写关闭事件
 FLOWABLE.TOOLBAR.ACTIONS.customClose =  function(services) {
+	var urlPathName = FLOWABLE.CONFIG.contextRoot.replace('/workflow','')
     if (services) {
 		var savePlugin;
 		var plugins = services.editorManager.editor.loadedPlugins;
@@ -56,10 +57,10 @@ FLOWABLE.TOOLBAR.ACTIONS.customClose =  function(services) {
 				// 点击X的时候自行判断是否发生变化 解决electron下onbeforeunload不好用的情况 页面跳转之前清除onbeforeunload事件防止弹2次
 				if (confirm('系统可能不会保存您所做的更改，确定离开吗？')) {
 					window.onbeforeunload = null;
-					window.location.href = '/#/workflow/designer';
+					window.location.href = urlPathName + '/#/workflow/designer';
 				}
 			} else {
-				window.location.href = '/#/workflow/designer';
+				window.location.href = urlPathName + '/#/workflow/designer';
 			}
 		}
 	}

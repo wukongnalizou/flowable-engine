@@ -1,6 +1,6 @@
 {
   "name": "flowable-ui-app-static-resources",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "flowable frontend static resources",
   "license": "MIT"
 }
