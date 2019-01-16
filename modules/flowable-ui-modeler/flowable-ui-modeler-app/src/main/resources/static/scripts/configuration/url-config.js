@@ -248,6 +248,8 @@ FLOWABLE.APP_URL = {
 
     checkCondition: function() {
         return FLOWABLE.CONFIG.contextRoot + '/ext/modeler/condition';
+    },
+    saveForm: function() {
+        return FLOWABLE.CONFIG.contextRoot + '/ext/modeler';
     }
-
 };

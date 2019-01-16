@@ -88,20 +88,37 @@ angular.module('flowableModeler').controller('FlowableFormReferencePopupCtrl',
 
         // Saving the selected value
         $scope.save = function () {
-            if ($scope.selectedForm) {
-                $scope.property.value = {
-                    'id': $scope.selectedForm.id,
-                    'name': $scope.selectedForm.name,
-                    'key': $scope.selectedForm.key
-                };
-
-            } else {
-                $scope.property.value = null;
+            let params = {
+                name: $scope.selectedForm.name,
+                key: $scope.selectedForm.key,
+                description: '',
+                modelType: 2
             }
-            $scope.updatePropertyInModel($scope.property);
-            $scope.close();
+            $http({
+                method: 'POST',
+                data: params,
+                ignoreErrors: true,
+                headers: {
+                    'Accept': 'application/json',
+                },
+                url: FLOWABLE.APP_URL.saveForm()
+            }).success(function (data, status, headers, config) {
+                if ($scope.selectedForm) {
+                    $scope.property.value = {
+                        'id': data.id,
+                        'name': $scope.selectedForm.name,
+                        'key': $scope.selectedForm.key
+                    };
+                } else {
+                    $scope.property.value = null;
+                }
+                $scope.updatePropertyInModel($scope.property);
+                $scope.close();
+            }).error(function (data, status, headers, config) {
+                alert(data)
+            });
+            
         };
-
         // Open the selected value
         $scope.open = function () {
             if ($scope.selectedForm) {

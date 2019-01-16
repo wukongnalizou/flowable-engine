@@ -22,10 +22,10 @@
                 <div class="detail-group clearfix">
                     <div class="col-xs-12 editor-item-picker">
                         <div ng-if="!state.loadingForms && !state.formError" class="col-xs-4 editor-item-picker-component"
-                            ng-repeat="form in forms" ng-class="{'formSelected' : form._id.$oid == selectedForm.id}"
+                            ng-repeat="form in forms" ng-class="{'formSelected' : form.formkeydefinition == selectedForm.key}"
                             ng-click="selectForm(form, $event)">
                             <div class="controls">
-                                <input type="radio" value="option1" ng-click="selectForm(form, $event)" ng-checked="form._id.$oid == selectedForm.id" />
+                                <input type="radio" value="option1" ng-click="selectForm(form, $event)" ng-checked="form.formkeydefinition == selectedForm.key" />
                             </div>
                             <h5>{{form.name}}</h5>
                             <h5>{{form.description}}</h5>
