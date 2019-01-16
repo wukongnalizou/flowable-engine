@@ -10,174 +10,109 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 angular.module('flowableModeler').controller('FlowableFormReferenceDisplayCtrl',
-    [ '$scope', '$modal', '$http', function($scope, $modal, $http) {
-    
-    if ($scope.property && $scope.property.value && $scope.property.value.id) {
-   		$http.get(FLOWABLE.APP_URL.getModelUrl($scope.property.value.id))
-            .success(
-                function(response) {
-                    $scope.form = {
-                    	id: response.id,
-                    	name: response.name
-                    };
-                });
-    }
-	
-}]);
+    ['$scope', '$modal', '$http', function ($scope, $modal, $http) {
+
+        if ($scope.property && $scope.property.value && $scope.property.value.id) {
+            // $http.get(FLOWABLE.APP_URL.getModelUrl($scope.property.value.id))
+            //     .success(
+            //         function(response) {
+            //             $scope.form = {
+            //             	id: response.id,
+            //             	name: response.name
+            //             };
+            //         });
+            $scope.form = {
+                id: $scope.property.value.id,
+                name: $scope.property.value.name
+            };
+        }
+
+    }]);
 
 angular.module('flowableModeler').controller('FlowableFormReferenceCtrl',
-    [ '$scope', '$modal', '$http', function($scope, $modal, $http) {
-	
-     // Config for the modal window
-     var opts = {
-         template:  'editor-app/configuration/properties/form-reference-popup.html?version=' + Date.now(),
-         scope: $scope
-     };
+    ['$scope', '$modal', '$http', function ($scope, $modal, $http) {
 
-     // Open the dialog
-     _internalCreateModal(opts, $modal, $scope);
-}]);
+        // Config for the modal window
+        var opts = {
+            template: 'editor-app/configuration/properties/form-reference-popup.html?version=' + Date.now(),
+            scope: $scope
+        };
+
+        // Open the dialog
+        _internalCreateModal(opts, $modal, $scope);
+    }]);
 
 angular.module('flowableModeler').controller('FlowableFormReferencePopupCtrl',
-    [ '$rootScope', '$scope', '$http', '$location', 'editorManager', function($rootScope, $scope, $http, $location, editorManager) {
-	 
-	$scope.state = {'loadingForms' : true, 'formError' : false};
-	
-	$scope.popup = {'state' : 'formReference'};
-    
-    $scope.foldersBreadCrumbs = [];
-    
-    // Close button handler
-    $scope.close = function() {
-    	$scope.property.mode = 'read';
-        $scope.$hide();
-    };
-    
-    // Selecting/deselecting a subprocess
-    $scope.selectForm = function(form, $event) {
-   	 	$event.stopPropagation();
-   	 	if ($scope.selectedForm && $scope.selectedForm.id && form.id == $scope.selectedForm.id) {
-   	 		// un-select the current selection
-   	 		$scope.selectedForm = null;
-   	 	} else {
-   	 		$scope.selectedForm = form;
-   	 	}
-    };
-    
-    // Saving the selected value
-    $scope.save = function() {
-   	 	if ($scope.selectedForm) {
-   	 		$scope.property.value = {
-   	 			'id' : $scope.selectedForm.id, 
-   	 			'name' : $scope.selectedForm.name,
-   	 			'key' : $scope.selectedForm.key
-   	 		};
-   	 		
-   	 	} else {
-   	 		$scope.property.value = null; 
-   	 	}
-   	 	$scope.updatePropertyInModel($scope.property);
-   	 	$scope.close();
-    };
-    
-    // Open the selected value
-    $scope.open = function() {
-        if ($scope.selectedForm) {
-            $scope.property.value = {
-            	'id' : $scope.selectedForm.id, 
-            	'name' : $scope.selectedForm.name,
-            	'key' : $scope.selectedForm.key
-            };
-            
-            $scope.updatePropertyInModel($scope.property);
-            
-            var modelMetaData = editorManager.getBaseModelData();
-            var json = editorManager.getModel();
-            json = JSON.stringify(json);
+    ['$rootScope', '$scope', '$http', '$location', 'editorManager', function ($rootScope, $scope, $http, $location, editorManager) {
 
-            var params = {
-                modeltype: modelMetaData.model.modelType,
-                json_xml: json,
-                name: modelMetaData.name,
-                key: modelMetaData.key,
-                description: modelMetaData.description,
-                newversion: false,
-                lastUpdated: modelMetaData.lastUpdated
-            };
+        $scope.state = { 'loadingForms': true, 'formError': false };
 
-            // Update
-            $http({ method: 'POST',
-                data: params,
-                ignoreErrors: true,
-                headers: {'Accept': 'application/json',
-                          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
-                transformRequest: function (obj) {
-                    var str = [];
-                    for (var p in obj) {
-                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    }
-                    return str.join("&");
-                },
-                url: FLOWABLE.URL.putModel(modelMetaData.modelId)})
+        $scope.popup = { 'state': 'formReference' };
 
-                .success(function (data, status, headers, config) {
-                    editorManager.handleEvents({
-                        type: ORYX.CONFIG.EVENT_SAVED
-                    });
+        $scope.foldersBreadCrumbs = [];
+        $scope.foldersBreadCrumbs = [];
+        const prefix_request = window.localStorage.getItem('pea_workflow_dynamic_request_prefix');
+        var url = `${prefix_request}/msc/PEP_FORM_TEMPLATE?query=${encodeURIComponent(JSON.stringify(
+            { type: "WORKFLOW" }
+        ))}`;
+        $http.get(url, {}).success(function (resp, status, headers, config) {
+            console.log(resp, status);
+            $scope.state.loadingForms = false;
+            $scope.state.formError = false;
+            $scope.forms = resp.data;
+        }).error(function (data, status, headers, config) {
+            alert(status);
+        })
+        // Close button handler
+        $scope.close = function () {
+            $scope.property.mode = 'read';
+            $scope.$hide();
+        };
 
-                    var allSteps = EDITOR.UTIL.collectSortedElementsFromPrecedingElements($scope.selectedShape);
-
-					$rootScope.addHistoryItem($scope.selectedShape.resourceId);
-                    $location.path('form-editor/' + $scope.selectedForm.id);
-
-                })
-                .error(function (data, status, headers, config) {
-                    
-                });
-            
-            $scope.close();
-        }
-    };
-    
-    $scope.newForm = function() {
-        $scope.popup.state = 'newForm';
-        
-        var modelMetaData = editorManager.getBaseModelData();
-        
-        $scope.model = {
-            loading: false,
-            form: {
-                 name: '',
-                 key: '',
-                 description: '',
-                 modelType: 2
+        // Selecting/deselecting a subprocess
+        $scope.selectForm = function (form, $event) {
+            $event.stopPropagation();
+            if ($scope.selectedForm && $scope.selectedForm.id && form.id == $scope.selectedForm.id) {
+                // un-select the current selection
+                $scope.selectedForm = null;
+            } else {
+                $scope.selectedForm = {
+                    'id': form._id.$oid,
+                    'name': form.name,
+                    'key': form.formkeydefinition
+                };
             }
         };
-    };
-    
-    $scope.createForm = function() {
-        
-        if (!$scope.model.form.name || $scope.model.form.name.length == 0 ||
-        	!$scope.model.form.key || $scope.model.form.key.length == 0) {
-        	
-            return;
-        }
 
-        $scope.model.loading = true;
-
-        $http({method: 'POST', url: FLOWABLE.APP_URL.getModelsUrl(), data: $scope.model.form}).
-            success(function(data, status, headers, config) {
-                
-                var newFormId = data.id;
+        // Saving the selected value
+        $scope.save = function () {
+            if ($scope.selectedForm) {
                 $scope.property.value = {
-                	'id' : newFormId, 
-                	'name' : data.name,
-                	'key' : data.key
-               	};
+                    'id': $scope.selectedForm.id,
+                    'name': $scope.selectedForm.name,
+                    'key': $scope.selectedForm.key
+                };
+
+            } else {
+                $scope.property.value = null;
+            }
+            $scope.updatePropertyInModel($scope.property);
+            $scope.close();
+        };
+
+        // Open the selected value
+        $scope.open = function () {
+            if ($scope.selectedForm) {
+                $scope.property.value = {
+                    'id': $scope.selectedForm.id,
+                    'name': $scope.selectedForm.name,
+                    'key': $scope.selectedForm.key
+                };
+
                 $scope.updatePropertyInModel($scope.property);
-                
+
                 var modelMetaData = editorManager.getBaseModelData();
                 var json = editorManager.getModel();
                 json = JSON.stringify(json);
@@ -193,11 +128,14 @@ angular.module('flowableModeler').controller('FlowableFormReferencePopupCtrl',
                 };
 
                 // Update
-                $http({ method: 'POST',
+                $http({
+                    method: 'POST',
                     data: params,
                     ignoreErrors: true,
-                    headers: {'Accept': 'application/json',
-                              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    },
                     transformRequest: function (obj) {
                         var str = [];
                         for (var p in obj) {
@@ -205,57 +143,147 @@ angular.module('flowableModeler').controller('FlowableFormReferencePopupCtrl',
                         }
                         return str.join("&");
                     },
-                    url: FLOWABLE.URL.putModel(modelMetaData.modelId)})
+                    url: FLOWABLE.URL.putModel(modelMetaData.modelId)
+                })
 
                     .success(function (data, status, headers, config) {
                         editorManager.handleEvents({
                             type: ORYX.CONFIG.EVENT_SAVED
                         });
-                        
-                        $scope.model.loading = false;
-                        $scope.$hide();
 
                         var allSteps = EDITOR.UTIL.collectSortedElementsFromPrecedingElements($scope.selectedShape);
 
                         $rootScope.addHistoryItem($scope.selectedShape.resourceId);
-                        $location.path('form-editor/' + newFormId);
+                        $location.path('form-editor/' + $scope.selectedForm.id);
 
                     })
                     .error(function (data, status, headers, config) {
-                        $scope.model.loading = false;
-                        $scope.$hide();
+
                     });
-                
-            }).
-            error(function(data, status, headers, config) {
-                $scope.model.loading = false;
-                $scope.model.errorMessage = data.message;
-            });
-    };
-    
-    $scope.cancel = function() {
-        $scope.close();
-    };
 
-    $scope.loadForms = function() {
-        var modelMetaData = editorManager.getBaseModelData();
-        $http.get(FLOWABLE.APP_URL.getFormModelsUrl())
-            .success(
-                function(response) {
-                    $scope.state.loadingForms = false;
-                    $scope.state.formError = false;
-                    $scope.forms = response.data;
-                })
-            .error(
-                function(data, status, headers, config) {
-                    $scope.state.loadingForms = false;
-                    $scope.state.formError = true;
+                $scope.close();
+            }
+        };
+
+        $scope.newForm = function () {
+            $scope.popup.state = 'newForm';
+
+            var modelMetaData = editorManager.getBaseModelData();
+
+            $scope.model = {
+                loading: false,
+                form: {
+                    name: '',
+                    key: '',
+                    description: '',
+                    modelType: 2
+                }
+            };
+        };
+
+        $scope.createForm = function () {
+
+            if (!$scope.model.form.name || $scope.model.form.name.length == 0 ||
+                !$scope.model.form.key || $scope.model.form.key.length == 0) {
+
+                return;
+            }
+
+            $scope.model.loading = true;
+
+            $http({ method: 'POST', url: FLOWABLE.APP_URL.getModelsUrl(), data: $scope.model.form }).
+                success(function (data, status, headers, config) {
+
+                    var newFormId = data.id;
+                    $scope.property.value = {
+                        'id': newFormId,
+                        'name': data.name,
+                        'key': data.key
+                    };
+                    $scope.updatePropertyInModel($scope.property);
+
+                    var modelMetaData = editorManager.getBaseModelData();
+                    var json = editorManager.getModel();
+                    json = JSON.stringify(json);
+
+                    var params = {
+                        modeltype: modelMetaData.model.modelType,
+                        json_xml: json,
+                        name: modelMetaData.name,
+                        key: modelMetaData.key,
+                        description: modelMetaData.description,
+                        newversion: false,
+                        lastUpdated: modelMetaData.lastUpdated
+                    };
+
+                    // Update
+                    $http({
+                        method: 'POST',
+                        data: params,
+                        ignoreErrors: true,
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                        transformRequest: function (obj) {
+                            var str = [];
+                            for (var p in obj) {
+                                str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                            }
+                            return str.join("&");
+                        },
+                        url: FLOWABLE.URL.putModel(modelMetaData.modelId)
+                    })
+
+                        .success(function (data, status, headers, config) {
+                            editorManager.handleEvents({
+                                type: ORYX.CONFIG.EVENT_SAVED
+                            });
+
+                            $scope.model.loading = false;
+                            $scope.$hide();
+
+                            var allSteps = EDITOR.UTIL.collectSortedElementsFromPrecedingElements($scope.selectedShape);
+
+                            $rootScope.addHistoryItem($scope.selectedShape.resourceId);
+                            $location.path('form-editor/' + newFormId);
+
+                        })
+                        .error(function (data, status, headers, config) {
+                            $scope.model.loading = false;
+                            $scope.$hide();
+                        });
+
+                }).
+                error(function (data, status, headers, config) {
+                    $scope.model.loading = false;
+                    $scope.model.errorMessage = data.message;
                 });
-    };
+        };
 
-    if ($scope.property && $scope.property.value && $scope.property.value.id) {
-   	     $scope.selectedForm = $scope.property.value;
-    }
+        $scope.cancel = function () {
+            $scope.close();
+        };
 
-    $scope.loadForms();
-}]);
+        $scope.loadForms = function () {
+            var modelMetaData = editorManager.getBaseModelData();
+            $http.get(FLOWABLE.APP_URL.getFormModelsUrl())
+                .success(
+                    function (response) {
+                        $scope.state.loadingForms = false;
+                        $scope.state.formError = false;
+                        $scope.forms = response.data;
+                    })
+                .error(
+                    function (data, status, headers, config) {
+                        $scope.state.loadingForms = false;
+                        $scope.state.formError = true;
+                    });
+        };
+
+        if ($scope.property && $scope.property.value && $scope.property.value.id) {
+            $scope.selectedForm = $scope.property.value;
+        }
+
+        // $scope.loadForms();
+    }]);

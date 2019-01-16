@@ -20,52 +20,66 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesCtrl',
         // Start 覆盖原来的代码
         // 获取表单关键字
         //const formkeydefinition = jQuery('#oryx-formkeydefinition').text().trim();
-        const formkeydefinition = $scope.selectedItem.properties.find(it=>it.key === 'oryx-formkeydefinition').value;
+        const formkeydefinition = $scope.selectedItem.properties.find(it => it.key === "oryx-formkeydefinition").value;
+        const formreference = $scope.selectedItem.properties.find(it => it.key === "oryx-formreference").value.key;
+        var condition = '';
+        if (formkeydefinition) {
+            condition = formkeydefinition;
+        } else {
+            condition = formreference;
+        }
         const prefix_request = window.localStorage.getItem('pea_workflow_dynamic_request_prefix');
         // 通过获取表单关键字查询自定义表单里的属性
-        var url = `${prefix_request}/msc/PEP_FORM_TEMPLATE?query=${encodeURIComponent(JSON.stringify({formkeydefinition: formkeydefinition}))}`;
-        $http.get(url,{}).success(function(resp,status,headers,config){
-                console.log(resp,status);
-                var result = resp.data[0];
-                if (result && result.formDetails) {
-                    var formJson = JSON.parse(result.formDetails).formJson;
-                    var formProperties = formJson.map(item=>({
-                        name: item.label,
-                        id: item.name,
-                        readable: true,
-                        writable: true,
-                        type: null,
-                        isCustomForm: true
-                    }));
-                    // 没有值的情况 添加
-                    if (!$scope.property.value) {
-                        $scope.property.value = {
-                            formProperties
-                        }
-                    }
-                    // 有值的情况 合并
-                    if ($scope.property.value && $scope.property.value.formProperties) {
-                        //去重
-                        var keys = $scope.property.value.formProperties.map(item=>item.id);
-                        formProperties.forEach(fp=>{
-                            if (!keys.includes(fp.id)) {
-                                $scope.property.value.formProperties.push(fp)
-                            }
-                        })
+        var url = `${prefix_request}/msc/PEP_FORM_TEMPLATE?query=${encodeURIComponent(JSON.stringify({ formkeydefinition: condition }))}`;
+        $http.get(url, {}).success(function (resp, status, headers, config) {
+            console.log(resp, status);
+            var result = resp.data[0];
+            var formProperties = [];
+            if (result && result.formDetails) {
+                var formJson = JSON.parse(result.formDetails).formJson;
+                formProperties = formJson.map(item => ({
+                    name: item.label,
+                    id: item.name,
+                    readable: true,
+                    writable: true,
+                    type: null,
+                    isCustomForm: true
+                }));
+                // 没有值的情况 添加
+                if (!$scope.property.value) {
+                    $scope.property.value = {
+                        formProperties
                     }
                 }
-        // END
+                // 有值的情况 合并
+                if ($scope.property.value && $scope.property.value.formProperties) {
 
-                // Config for the modal window
-                var opts = {
-                    template: 'editor-app/configuration/properties/form-properties-popup.html?version=' + Date.now(),
-                    scope: $scope
-                };
+                    var isCustoms = $scope.property.value.formProperties.filter((item) => {
+                        return item.isCustomForm !== true
+                    });
+                    $scope.property.value.formProperties = [...formProperties, ...isCustoms];
+                }
+            } else {
+                if ($scope.property.value && $scope.property.value.formProperties) {
 
-                // Open the dialog
-                _internalCreateModal(opts, $modal, $scope);
-            }).error(function(data,status,headers,config){
-                alert(status);
+                    var isCustoms = $scope.property.value.formProperties.filter((item) => {
+                        return item.isCustomForm !== true
+                    });
+                    $scope.property.value.formProperties = [...formProperties, ...isCustoms];
+                }
+            }
+            // END
+
+            // Config for the modal window
+            var opts = {
+                template: 'editor-app/configuration/properties/form-properties-popup.html?version=' + Date.now(),
+                scope: $scope
+            };
+
+            // Open the dialog
+            _internalCreateModal(opts, $modal, $scope);
+        }).error(function (data, status, headers, config) {
+            alert(status);
         })
     }]);
 
@@ -80,17 +94,17 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
             $scope.formProperties = angular.copy($scope.property.value.formProperties);
 
             for (var i = 0; i < $scope.formProperties.length; i++) {
-			    var formProperty = $scope.formProperties[i];
-			    if (formProperty.enumValues && formProperty.enumValues.length > 0) {
-				    for (var j = 0; j < formProperty.enumValues.length; j++) {
-					    var enumValue = formProperty.enumValues[j];
-					    if (!enumValue.id && !enumValue.name && enumValue.value) {
-						    enumValue.id = enumValue.value;
-						    enumValue.name = enumValue.value;
-					    }
-				    }
-			    }
-			}
+                var formProperty = $scope.formProperties[i];
+                if (formProperty.enumValues && formProperty.enumValues.length > 0) {
+                    for (var j = 0; j < formProperty.enumValues.length; j++) {
+                        var enumValue = formProperty.enumValues[j];
+                        if (!enumValue.id && !enumValue.name && enumValue.value) {
+                            enumValue.id = enumValue.value;
+                            enumValue.name = enumValue.value;
+                        }
+                    }
+                }
+            }
 
         } else {
             $scope.formProperties = [];
@@ -123,13 +137,13 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
                 enableHorizontalScrollbar: 0,
                 enableColumnMenus: false,
                 enableSorting: false,
-                columnDefs: [{field: 'id', displayName: $scope.labels.idLabel},
-                    {field: 'name', displayName: $scope.labels.nameLabel},
-                    {field: 'type', displayName: $scope.labels.typeLabel}]
+                columnDefs: [{ field: 'id', displayName: $scope.labels.idLabel },
+                { field: 'name', displayName: $scope.labels.nameLabel },
+                { field: 'type', displayName: $scope.labels.typeLabel }]
             };
 
             $scope.enumGridOptions = {
-    		    data: $scope.enumValues,
+                data: $scope.enumValues,
                 headerRowHeight: 28,
                 enableRowSelection: true,
                 enableRowHeaderSelection: false,
@@ -139,7 +153,7 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
                 enableColumnMenus: false,
                 enableSorting: false,
                 columnDefs: [{ field: 'id', displayName: $scope.labels.idLabel },
-                { field: 'name', displayName: $scope.labels.nameLabel}]
+                { field: 'name', displayName: $scope.labels.nameLabel }]
             }
 
             $scope.gridOptions.onRegisterApi = function (gridApi) {
@@ -178,7 +192,7 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
 
             // Check enum. If enum, show list of options
             if ($scope.selectedProperty.type === 'enum') {
-                $scope.selectedProperty.enumValues = [ {id: 'value1', name: 'Value 1'}, {id: 'value2', name: 'Value 2'}];
+                $scope.selectedProperty.enumValues = [{ id: 'value1', name: 'Value 1' }, { id: 'value2', name: 'Value 2' }];
                 $scope.enumValues.length = 0;
                 for (var i = 0; i < $scope.selectedProperty.enumValues.length; i++) {
                     $scope.enumValues.push($scope.selectedProperty.enumValues[i]);
@@ -220,7 +234,7 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
                     $scope.selectedProperty = undefined;
                 }
 
-                $timeout(function() {
+                $timeout(function () {
                     if ($scope.formProperties.length > 0) {
                         $scope.gridApi.selection.toggleRowSelection($scope.formProperties[0]);
                     }
@@ -236,9 +250,9 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
                 if (index != 0) { // If it's the first, no moving up of course
                     var temp = $scope.formProperties[index];
                     $scope.formProperties.splice(index, 1);
-                    $timeout(function(){
+                    $timeout(function () {
                         $scope.formProperties.splice(index + -1, 0, temp);
-                        $timeout(function() {
+                        $timeout(function () {
                             $scope.gridApi.selection.toggleRowSelection(temp);
                         });
                     });
@@ -254,9 +268,9 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
                 if (index != $scope.formProperties.length - 1) { // If it's the last element, no moving down of course
                     var temp = $scope.formProperties[index];
                     $scope.formProperties.splice(index, 1);
-                    $timeout(function(){
+                    $timeout(function () {
                         $scope.formProperties.splice(index + 1, 0, temp);
-                        $timeout(function() {
+                        $timeout(function () {
                             $scope.gridApi.selection.toggleRowSelection(temp);
                         });
                     });
@@ -264,20 +278,20 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
             }
         };
 
-        $scope.addNewEnumValue = function() {
+        $scope.addNewEnumValue = function () {
             if ($scope.selectedProperty) {
-        	    var newEnumValue = { id : '', name : ''};
-        	    $scope.selectedProperty.enumValues.push(newEnumValue);
-        	    $scope.enumValues.push(newEnumValue);
+                var newEnumValue = { id: '', name: '' };
+                $scope.selectedProperty.enumValues.push(newEnumValue);
+                $scope.enumValues.push(newEnumValue);
 
-    	        $timeout(function () {
+                $timeout(function () {
                     $scope.enumGridApi.selection.toggleRowSelection(newEnumValue);
                 });
-        	}
+            }
         };
 
         // Click handler for remove button
-        $scope.removeEnumValue = function() {
+        $scope.removeEnumValue = function () {
             var selectedItems = $scope.enumGridApi.selection.getSelectedRows();
             if (selectedItems && selectedItems.length > 0) {
                 var index = $scope.enumValues.indexOf(selectedItems[0]);
@@ -299,7 +313,7 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
         };
 
         // Click handler for up button
-        $scope.moveEnumValueUp = function() {
+        $scope.moveEnumValueUp = function () {
             var selectedItems = $scope.enumGridApi.selection.getSelectedRows();
             if (selectedItems && selectedItems.length > 0) {
                 var index = $scope.enumValues.indexOf(selectedItems[0]);
@@ -319,7 +333,7 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
         };
 
         // Click handler for down button
-        $scope.moveEnumValueDown = function() {
+        $scope.moveEnumValueDown = function () {
             var selectedItems = $scope.enumGridApi.selection.getSelectedRows();
             if (selectedItems && selectedItems.length > 0) {
                 var index = $scope.enumValues.indexOf(selectedItems[0]);
@@ -343,17 +357,17 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
         // selectedProperty.writable
         // selectedProperty.required
         $scope.onWritableChange = function () {
-          if (!$scope.selectedProperty.writable) {
-            $scope.selectedProperty.required = false;
-          }
+            if (!$scope.selectedProperty.writable) {
+                $scope.selectedProperty.required = false;
+            }
         }
 
         // Click handler for readable checkbox
         $scope.onReadableChange = function () {
-          if (!$scope.selectedProperty.readable) {
-            $scope.selectedProperty.writable = false;
-            $scope.selectedProperty.required = false;
-          }
+            if (!$scope.selectedProperty.readable) {
+                $scope.selectedProperty.writable = false;
+                $scope.selectedProperty.required = false;
+            }
         }
 
         // Click handler for save button
@@ -381,5 +395,4 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesPopupCtrl',
             $scope.property.mode = 'read';
         };
 
-    }])
-;
+    }]);

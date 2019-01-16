@@ -693,6 +693,7 @@
 
     "ACTION.OK" : "Ok",
     "ACTION.SAVE" : "保存",
+    "ACTION.CHECK": "检查",
     "ACTION.SAVE-AND-CLOSE" : "保存和关闭编辑器",
     "ACTION.SEND" : "发送",
     "ACTION.CANCEL" : "取消",

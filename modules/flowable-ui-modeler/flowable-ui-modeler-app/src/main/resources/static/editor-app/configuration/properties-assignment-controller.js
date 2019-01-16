@@ -71,17 +71,21 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
     //获取option接口 需接口返回后执行下面逻辑
     $scope.updateAssign = function() {
         assignService.getFilterAssign().then(function(result) {
+            console.log(result)
             for (var i = 0; i < result.length; i++) {
                 if (result[i].type === 'USER') {
                     result[i].id = 'users'
                 } else {
-                    result[i].id = result[i].type
+                    // result[i].id = result[i].type
+                    result[i].id = 'groups'
                 }
             }
             $scope.assignmentOptions = $scope.assignmentOptions.concat(result)
-            if ($scope.assignment.idm && $scope.assignment.idm.type) {
+            if ($scope.assignment.idm && $scope.assignment.idm.type && $scope.assignment.idm.candidateGroups) {
                 for (var i = 0; i < $scope.assignmentOptions.length; i++) {
-                    if ($scope.assignmentOptions[i].id == $scope.assignment.idm.type) {
+                    let type = $scope.assignment.idm.candidateGroups[0].id.split('_')
+                    type = type[type.length-1]
+                    if ($scope.assignmentOptions[i].type == type) {
                         $scope.assignmentOption = $scope.assignmentOptions[i];
                         break;
                     }
@@ -148,7 +152,7 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
             });
             //监听选择变化
             $scope.$watch('assignmentOption', function(n, o) {
-                if (n.id != o.id) {
+                if (n.type != o.type) {
                     $scope.popup.assignmentObject.idm.candidateGroups = [];
                     $scope.popup.groupFilter = '';
                     $scope.popup.groupResults = [];

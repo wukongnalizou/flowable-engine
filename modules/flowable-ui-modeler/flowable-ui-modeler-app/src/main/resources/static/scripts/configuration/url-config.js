@@ -244,6 +244,10 @@ FLOWABLE.APP_URL = {
 
     getAboutInfoUrl: function () {
         return FLOWABLE.CONFIG.contextRoot + '/app/rest/about-info';
+    },
+
+    checkCondition: function() {
+        return FLOWABLE.CONFIG.contextRoot + '/ext/modeler/condition';
     }
 
 };

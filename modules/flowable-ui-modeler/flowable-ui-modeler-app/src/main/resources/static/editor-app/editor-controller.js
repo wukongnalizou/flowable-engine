@@ -16,8 +16,8 @@
  * General bootstrap of the application.
  */
 angular.module('flowableModeler')
-    .controller('EditorController', ['$rootScope', '$scope', '$http', '$q', '$routeParams', '$timeout', '$location', '$translate', '$modal', 'editorManager', 'FormBuilderService',
-        function ($rootScope, $scope, $http, $q, $routeParams, $timeout, $location, $translate, $modal, editorManager, FormBuilderService) {
+    .controller('EditorController', ['$rootScope', '$scope', '$http', '$q', '$routeParams', '$timeout', '$location', '$translate', '$modal', 'editorManager', 'assignService',
+        function ($rootScope, $scope, $http, $q, $routeParams, $timeout, $location, $translate, $modal, editorManager, assignService) {
 
     $rootScope.editorFactory = $q.defer();
 
@@ -396,9 +396,30 @@ angular.module('flowableModeler')
 	editorManager.setModelId(modelId);
 	//we first initialize the stencilset used by the editor. The editorId is always the modelId.
 	$http.get(FLOWABLE.URL.getModel(modelId)).then(function (response) {
-	    editorManager.setModelData(response);
+        let http = response;
+        assignService.getFilterAssign().then(function (result) {
+            let json = http.data.model
+            if (json.childShapes.length > 0) {
+                for (let i = 0; i < json.childShapes.length; i++) {
+                    if (json.childShapes[i].properties.usertaskassignment && json.childShapes[i].properties.usertaskassignment.assignment && json.childShapes[i].properties.usertaskassignment.assignment.idm && json.childShapes[i].properties.usertaskassignment.assignment.idm.candidateGroups) {
+                        for (let j = 0; j < json.childShapes[i].properties.usertaskassignment.assignment.idm.candidateGroups.length; j++) {
+                            let obj = json.childShapes[i].properties.usertaskassignment.assignment.idm.candidateGroups[j]
+                            let type = obj.id.split('_')
+                            type = type[type.length - 1]
+                            let option = result.find(function (item) {
+                                return item.type == type
+                            })
+                            obj.typeName = option.name
+                            obj.type = option.type
+                        }
+                    }
+                }
+            }
+        })
+        editorManager.setModelData(http);
 	    return response;
 	}).then(function (modelData) {
+        $rootScope.formdata = modelData;
 	    if(modelData.data.model.stencilset.namespace == 'http://b3mn.org/stencilset/cmmn1.1#') {
 	       return $http.get(FLOWABLE.URL.getCmmnStencilSet());
 	    } else {

@@ -6,3 +6,59 @@
 .editor-main-padding {
   padding-top:0 !important;
 }
+.formSelected {
+  background: #f0f4f7;
+}
+.operationDiv {
+  display: inline-block;
+  position: relative;
+}
+.operationSpan {
+  display:inline-block;
+  cursor: pointer;
+  margin: 6px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 16px;
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+}
+.operationModel {
+  position: absolute;
+  top: 45px;
+  background: #fff;
+  z-index: 3;
+  border: 1px solid rgba(217, 217, 217, 1);
+  border-radius: 5px;
+  /* padding: 3px; */
+}
+.operationDes{
+    /* width: 180px; */
+    height: 28px;
+    font-family: 'MicrosoftYaHei', 'Microsoft YaHei';
+    font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.847058823529412);
+    text-align: left;
+    padding-left: 5px;
+    line-height: 28px;
+    border-bottom: 1px solid rgba(217, 217, 217, 1);
+  }
+  .operationExa {
+    width: auto;
+    padding: 10px 5px;
+    font-family: 'PingFangSC-Regular', 'PingFang SC';
+    font-weight: 400;
+    font-style: normal;
+    white-space: nowrap;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.427450980392157);
+    text-align: left;
+    line-height: 22px;
+  }
+  .modal-header > .close {
+    margin-right: 10px;
+  }
