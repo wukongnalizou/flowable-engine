@@ -62,3 +62,9 @@
   .modal-header > .close {
     margin-right: 10px;
   }
+  .conditionMore {
+    padding: 0;
+  }
+  .conditionMore > .content {
+    padding: 20px;
+  }

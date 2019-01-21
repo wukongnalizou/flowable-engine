@@ -35,6 +35,7 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesCtrl',
             console.log(resp, status);
             var result = resp.data[0];
             var formProperties = [];
+            let textArray = ['Select', 'RadioGroup', 'CheckboxGroup', 'OopSystemCurrent', 'DatePicker']
             if (result && result.formDetails) {
                 var formJson = JSON.parse(result.formDetails).formJson;
                 formProperties = formJson.map(item => ({
@@ -43,14 +44,11 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesCtrl',
                     readable: true,
                     writable: true,
                     type: null,
-                    isCustomForm: true
+                    isCustomForm: true,
+                    componentKey: item.component.name || '',
+                    textValue: textArray.indexOf(item.component.name) > -1 ? true : false,
+                    children: item.component.children && item.component.children.length > 0 ? item.component.children : []
                 }));
-                // 没有值的情况 添加
-                if (!$scope.property.value) {
-                    $scope.property.value = {
-                        formProperties
-                    }
-                }
                 // 有值的情况 合并
                 if ($scope.property.value && $scope.property.value.formProperties) {
 
@@ -59,16 +57,13 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesCtrl',
                     });
                     $scope.property.value.formProperties = [...formProperties, ...isCustoms];
                 }
-            } else {
-                if ($scope.property.value && $scope.property.value.formProperties) {
-
-                    var isCustoms = $scope.property.value.formProperties.filter((item) => {
-                        return item.isCustomForm !== true
-                    });
-                    $scope.property.value.formProperties = [...formProperties, ...isCustoms];
+                // 没有值的情况 添加
+                if (!$scope.property.value) {
+                    $scope.property.value = {
+                        formProperties
+                    }
                 }
             }
-            // END
 
             // Config for the modal window
             var opts = {

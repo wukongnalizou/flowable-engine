@@ -2,7 +2,7 @@
 <div class="modal-dialog modal-wide">
 <div class="modal-content">
 <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="close()">&times;</button>
+    <button ng-if="!info" type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="close()">&times;</button>
     <h2 translate>PROPERTY.SEQUENCEFLOW.CONDITION.TITLE</h2>
 </div>
 <div class="modal-body">
@@ -10,6 +10,7 @@
     <!-- <div class="detail-group clearfix"> -->
         <div class="row row-no-gutter">
             <div class="col-xs-6">
+                <div>字段</div>
                 <div ng-if="translationsRetrieved" class="kis-listener-grid" ui-grid="gridOptions" ui-grid-selection></div>
             </div>
             <div class="col-xs-6">
@@ -27,6 +28,7 @@
         </div>
         <div class="row row-no-gutter">
             <div class="col-xs-6">
+                <div>操作符</div>
                 <div class="operationDiv" ng-repeat="operation in operations" ng-mouseenter="hover(operation)" ng-mouseleave="leave()">
                     <span class="operationSpan" >{{operation.title}}</span>
                     <div class="operationModel" ng-if="selectdItem === operation.title">
@@ -55,20 +57,20 @@
         <!-- <div class="modal-header">
             
         </div> -->
-        <div class="modal-body">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="closeInfo()">&times;</button>
-            <div style="height:600px;overflow-y:scroll;">
+        <div class="modal-body conditionMore">
+            <div class="content" style="height:600px;overflow-y:scroll;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="closeInfo()">&times;</button>
                 <p>使用说明:</p>
-                <p>1、分之条件使用基于UEL的语法规则的表达式实现分支的选择，表达式计算结果为真时选择分支，为假时不选择。</p>
+                <p>1、分支条件使用基于UEL的语法规则的表达式实现分支的选择，表达式计算结果为真时选择分支，为假时不选择。</p>
                 <p>2、表达式可以用键盘直接输入和删除。</p>
                 <p>3、运算符要使用英文符号，不能使用中文符号。</p>
                 <p>4、字段必须是包含在表单内组件，字段前加“$”号用{}包裹。比较的值的类型必须与字段类型匹配。</p>
                 <p>5、用括号体现运算优先级，并支持嵌套括号。</p>
-                <p>6、比较值是字符串类型（包括日期和时间类型）的数据加双引号，数值类型不用加</p>
+                <p>6、比较值是字符串类型（包括日期和时间类型）的数据加双引号，数值类型不用加。</p>
                 <p>7、优先级：括号>四则预算>关系运算>逻辑运算。</p>
-                <p>8、四则运算只支持数值类型的计算，并且必须加括号</p>
+                <p>8、四则运算只支持数值类型的计算，并且必须加括号。</p>
                 <p>9、取反必须加括号。</p>
-                <p>10、表达式要符合语法规则，否则无法保存，也不能计算出结果</p>
+                <p>10、表达式要符合语法规则，否则无法保存，也不能计算出结果。</p>
                 <p>运算符说明：</p>
                 <p>一、关系运算符</p>
                 <p>1、>：大于。示例：${请假天数} > 3。</p>
