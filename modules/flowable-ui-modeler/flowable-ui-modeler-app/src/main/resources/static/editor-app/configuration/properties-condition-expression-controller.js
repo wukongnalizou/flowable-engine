@@ -200,7 +200,7 @@ angular
         let params = {
           sequenceCondition: $scope.property.value,
           params: $scope.formProperties,
-          parsing: true, // false 转为flowable true转为自然语言
+          parserEnum: 'TONATUAL', // TOFLOWABLE 转为flowable TONATUAL转为自然语言
         };
         $http({
           method: 'POST',
@@ -300,12 +300,12 @@ angular
         // var params = {
         //   sequenceCondition: "111",
         //   params: [{ "id": "organizationName", "name": "部门" }, { "id": "vacationTime", "name": "请假时长" }, { "id": "vacationType", "name": "请假类型" }],
-        //   parsing: false,
+        //   parserEnum: 'TOFLOWABLE',
         // };
         var params = {
           sequenceCondition: $scope.expression.natureValue,
           params: gridOptions.data,
-          parsing: false, // false 转为flowable true转为自然语言
+          parserEnum: 'TOFLOWABLE', // TOFLOWABLE 转为flowable TONATUAL转为自然语言
         };
         $http({
           method: 'POST',
@@ -327,7 +327,7 @@ angular
           var params = {
             sequenceCondition: $scope.expression.natureValue,
             params: gridOptions.data,
-            parsing: false, // false 转为flowable true转为自然语言
+            parserEnum: 'TOFLOWABLE', // false 转为flowable true转为自然语言
           };
           $http({
             method: 'POST',
