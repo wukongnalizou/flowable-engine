@@ -152,13 +152,13 @@ angular
             });
           };
         });
+        _internalCreateModal(opts, $modal, $scope);
       }).error(function (data1, status1, headers1, config1) {
         alert(resp1);
       })
       
       // $scope.formProperties = json.childShapes[0].properties.formproperties.formProperties;
       // Open the dialog
-      _internalCreateModal(opts, $modal, $scope);
     }).error(function (data, status, headers, config) {
       alert(data);
     })
