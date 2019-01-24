@@ -54,12 +54,12 @@
 </div>
 <div class="modal-dialog modal-wide" style="z-index:99;position: absolute;top: 0;" ng-if="info">
     <div class="modal-content">
-        <!-- <div class="modal-header">
-            
-        </div> -->
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="closeInfo()">&times;</button>
+            <h2>使用说明</h2>
+        </div>
         <div class="modal-body conditionMore">
             <div class="content" style="height:600px;overflow-y:scroll;">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="closeInfo()">&times;</button>
                 <p>使用说明:</p>
                 <p>1、分支条件使用基于UEL的语法规则的表达式实现分支的选择，表达式计算结果为真时选择分支，为假时不选择。</p>
                 <p>2、表达式可以用键盘直接输入和删除。</p>

@@ -56,7 +56,8 @@
 
                     <div class="form-group clearfix" ng-show="popup.assignmentObject.type != 'idm'">
                         <div class="col-xs-12">
-                            <label>{{'PROPERTY.ASSIGNMENT.CANDIDATE_GROUPS' | translate}}</label>
+                            <!-- <label>{{'PROPERTY.ASSIGNMENT.CANDIDATE_GROUPS' | translate}}</label> -->
+                            <label>候选组</label>
                         </div>
                         <div class="col-xs-12" ng-repeat="candidateGroup in popup.assignmentObject.static.candidateGroups">
                             <input id="groupField" class="form-control" type="text" ng-model="candidateGroup.value"/>

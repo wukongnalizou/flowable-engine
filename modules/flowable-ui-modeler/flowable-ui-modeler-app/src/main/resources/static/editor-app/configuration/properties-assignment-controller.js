@@ -81,13 +81,22 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
                 }
             }
             $scope.assignmentOptions = $scope.assignmentOptions.concat(result)
-            if ($scope.assignment.idm && $scope.assignment.idm.type && $scope.assignment.idm.candidateGroups) {
-                for (var i = 0; i < $scope.assignmentOptions.length; i++) {
-                    let type = $scope.assignment.idm.candidateGroups[0].id.split('_')
-                    type = type[type.length-1]
-                    if ($scope.assignmentOptions[i].type == type) {
-                        $scope.assignmentOption = $scope.assignmentOptions[i];
-                        break;
+            if ($scope.assignment.idm && $scope.assignment.idm.type) {
+                if ($scope.assignment.idm.type ==='groups') {
+                    for (var i = 0; i < $scope.assignmentOptions.length; i++) {
+                        let type = $scope.assignment.idm.candidateGroups[0].id.split('_')
+                        type = type[type.length - 1]
+                        if ($scope.assignmentOptions[i].type == type) {
+                            $scope.assignmentOption = $scope.assignmentOptions[i];
+                            break;
+                        }
+                    }
+                } else {
+                    for (var i = 0; i < $scope.assignmentOptions.length; i++) {
+                        if ($scope.assignmentOptions[i].id == $scope.assignment.idm.type) {
+                            $scope.assignmentOption = $scope.assignmentOptions[i];
+                            break;
+                        }
                     }
                 }
             }
@@ -448,29 +457,35 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
                 $scope.assignment.type = $scope.popup.assignmentObject.type;
         
                 if ('idm' === $scope.popup.assignmentObject.type) { // IDM
-                    $scope.popup.assignmentObject.static = undefined;
-        
-                    //Construct an IDM object to be saved to the process model.
-                    var idm = {type: $scope.assignmentOption.id};
-                    if ('user' == idm.type) {
-                        if ($scope.popup.assignmentObject.idm.assignee) {
-                            idm.assignee = $scope.popup.assignmentObject.idm.assignee;
+                    if (JSON.stringify($scope.popup.assignmentObject.idm.assignee) != undefined || $scope.popup.assignmentObject.idm.candidateGroups.length > 0 || $scope.popup.assignmentObject.idm.candidateUsers.length > 0 ) {
+                        $scope.popup.assignmentObject.static = undefined;
+
+                        //Construct an IDM object to be saved to the process model.
+                        var idm = { type: $scope.assignmentOption.id };
+                        if ('user' == idm.type) {
+                            if ($scope.popup.assignmentObject.idm.assignee) {
+                                idm.assignee = $scope.popup.assignmentObject.idm.assignee;
+                            }
+                        } else if ('users' == idm.type) {
+                            if ($scope.popup.assignmentObject.idm.candidateUsers && $scope.popup.assignmentObject.idm.candidateUsers.length > 0) {
+                                idm.candidateUsers = $scope.popup.assignmentObject.idm.candidateUsers;
+                            }
+                        } else {
+                            //其他添加类型服用候选人组
+                            if ($scope.popup.assignmentObject.idm.candidateGroups && $scope.popup.assignmentObject.idm.candidateGroups.length > 0) {
+                                idm.candidateGroups = $scope.popup.assignmentObject.idm.candidateGroups;
+                            }
                         }
-                    } else if ('users' == idm.type) {
-                        if ($scope.popup.assignmentObject.idm.candidateUsers && $scope.popup.assignmentObject.idm.candidateUsers.length > 0) {
-                            idm.candidateUsers = $scope.popup.assignmentObject.idm.candidateUsers;
-                        }
+                        $scope.assignment.idm = idm;
+                        $scope.assignment.assignee = undefined;
+                        $scope.assignment.candidateUsers = undefined;
+                        $scope.assignment.candidateGroups = undefined;
                     } else {
-                        //其他添加类型服用候选人组
-                        if ($scope.popup.assignmentObject.idm.candidateGroups && $scope.popup.assignmentObject.idm.candidateGroups.length > 0) {
-                            idm.candidateGroups = $scope.popup.assignmentObject.idm.candidateGroups;
-                        }
+                        $scope.assignment.idm = undefined;
+                        $scope.assignment.assignee = undefined;
+                        $scope.assignment.candidateUsers = undefined;
+                        $scope.assignment.candidateGroups = undefined;
                     }
-                    $scope.assignment.idm = idm;
-                    $scope.assignment.assignee = undefined;
-                    $scope.assignment.candidateUsers = undefined;
-                    $scope.assignment.candidateGroups = undefined;
-        
                 }
         
                 if ('static' === $scope.popup.assignmentObject.type) { // IDM

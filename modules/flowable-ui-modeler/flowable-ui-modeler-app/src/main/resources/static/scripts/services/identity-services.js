@@ -31,7 +31,7 @@ angular.module('flowableModeler').service('UserService', ['$http', '$q',
          * Filter users based on a filter text.
          */
         this.getFilteredUsers = function (filterText, taskId, processInstanceId) {
-            var params = {filter: filterText};
+            var params = {name: filterText};
             if(taskId) {
                 params.excludeTaskId = taskId;
             }
