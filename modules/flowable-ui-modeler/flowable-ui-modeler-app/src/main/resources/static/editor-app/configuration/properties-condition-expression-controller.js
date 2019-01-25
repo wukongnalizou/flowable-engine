@@ -34,11 +34,17 @@ angular
         scope: $scope
       };
     var json = editorManager.getModel();
-    let formKey = json.childShapes[0].properties.formkeydefinition
-    let formReference = json.childShapes[0].properties.formreference
+    let startNode = {}
+    for (let i = 0; i < json.childShapes.length; i++) {
+      if (json.childShapes[i].stencil.id === 'StartNoneEvent') {
+        startNode = json.childShapes[i]
+      }
+    }
+    let formKey = startNode.properties.formkeydefinition
+    let formReference = startNode.properties.formreference
     let condition = '';
       if (formKey) {
-      condition = formKey.key;
+      condition = formKey;
     } else {
       condition = formReference.key;
     }
