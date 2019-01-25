@@ -189,48 +189,115 @@ angular
       if (
         $scope.property.value !== undefined &&
         $scope.property.value !== null &&
-        $scope.property.value.expression !== undefined &&
-        $scope.property.value.expression !== null
-      ) {
-        $scope.expression = $scope.property.value.expression;
-        if ($scope.property.value.expression.natureValue) {
-          natureValue = $scope.property.value.expression.natureValue
-        }
-        $scope.expression = {
-          type: $scope.property.value.expression.type,
-          staticValue: $scope.property.value.expression.staticValue,
-          natureValue: natureValue
-        }
-      } else if (
-        $scope.property.value !== undefined &&
-        $scope.property.value !== null &&
         $scope.property.value !== ''
-      ) {
-        let params = {
-          sequenceCondition: $scope.property.value,
-          params: $scope.formProperties,
-          parserEnum: 'TONATUAL', // TOFLOWABLE 转为flowable TONATUAL转为自然语言
-        };
-        $http({
-          method: 'POST',
-          data: params,
-          ignoreErrors: true,
-          headers: {
-            'Accept': 'application/json',
-          },
-          url: FLOWABLE.APP_URL.checkCondition()
-        }).success(function (data, status, headers, config) {
-          $scope.expression = {
-            type: "static",
-            staticValue: $scope.property.value,
-            natureValue: data.sequenceCondition
+        ) {
+        if (
+          $scope.property.value.expression !== undefined &&
+          $scope.property.value.expression !== null
+          ) {
+            if ($scope.property.value.expression.natureValue) {
+              natureValue = $scope.property.value.expression.natureValue;
+              $scope.expression = {
+                type: $scope.property.value.expression.type,
+                staticValue: $scope.property.value.expression.staticValue,
+                natureValue: natureValue
+              }
+            } else {
+              let params = {
+                sequenceCondition: $scope.property.value.expression.staticValue,
+                params: $scope.formProperties,
+                parserEnum: 'TONATUAL', // TOFLOWABLE 转为flowable TONATUAL转为自然语言
+              };
+              $http({
+                method: 'POST',
+                data: params,
+                ignoreErrors: true,
+                headers: {
+                  'Accept': 'application/json',
+                },
+                url: FLOWABLE.APP_URL.checkCondition()
+              }).success(function (data, status, headers, config) {
+                $scope.expression = {
+                  type: "static",
+                  staticValue: $scope.property.value.expression.staticValue,
+                  natureValue: data.sequenceCondition
+                }
+              }).error(function (data, status, headers, config) {
+                alert(data)
+              });
+            }
+          } else {
+            let params = {
+              sequenceCondition: $scope.property.value,
+              params: $scope.formProperties,
+              parserEnum: 'TONATUAL', // TOFLOWABLE 转为flowable TONATUAL转为自然语言
+            };
+            $http({
+              method: 'POST',
+              data: params,
+              ignoreErrors: true,
+              headers: {
+                'Accept': 'application/json',
+              },
+              url: FLOWABLE.APP_URL.checkCondition()
+            }).success(function (data, status, headers, config) {
+              $scope.expression = {
+                type: "static",
+                staticValue: $scope.property.value,
+                natureValue: data.sequenceCondition
+              }
+            }).error(function (data, status, headers, config) {
+              alert(data)
+            });
           }
-        }).error(function (data, status, headers, config) {
-          alert(data)
-        });
-      } else {
-        $scope.expression = {};
-      }
+        } else {
+          $scope.expression = {};
+        }
+      // if (
+      //   $scope.property.value !== undefined &&
+      //   $scope.property.value !== null &&
+      //   $scope.property.value.expression !== undefined &&
+      //   $scope.property.value.expression !== null
+      // ) {
+      //   $scope.expression = $scope.property.value.expression;
+      //   if ($scope.property.value.expression.natureValue) {
+      //     natureValue = $scope.property.value.expression.natureValue
+      //   }
+      //   $scope.expression = {
+      //     type: $scope.property.value.expression.type,
+      //     staticValue: $scope.property.value.expression.staticValue,
+      //     natureValue: natureValue
+      //   }
+      // } else if (
+      //   $scope.property.value !== undefined &&
+      //   $scope.property.value !== null &&
+      //   $scope.property.value !== ''
+      // ) {
+      //   let params = {
+      //     sequenceCondition: $scope.property.value,
+      //     params: $scope.formProperties,
+      //     parserEnum: 'TONATUAL', // TOFLOWABLE 转为flowable TONATUAL转为自然语言
+      //   };
+      //   $http({
+      //     method: 'POST',
+      //     data: params,
+      //     ignoreErrors: true,
+      //     headers: {
+      //       'Accept': 'application/json',
+      //     },
+      //     url: FLOWABLE.APP_URL.checkCondition()
+      //   }).success(function (data, status, headers, config) {
+      //     $scope.expression = {
+      //       type: "static",
+      //       staticValue: $scope.property.value,
+      //       natureValue: data.sequenceCondition
+      //     }
+      //   }).error(function (data, status, headers, config) {
+      //     alert(data)
+      //   });
+      // } else {
+      //   $scope.expression = {};
+      // }
       $scope.info = false;
       $scope.operations = [
         {
