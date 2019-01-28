@@ -49,13 +49,18 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesCtrl',
                     textValue: textArray.indexOf(item.component.name) > -1 ? true : false,
                     children: item.component.children && item.component.children.length > 0 ? item.component.children : []
                 }));
+                if (!condition) {
+                    formProperties = []
+                }
                 // 有值的情况 合并
                 if ($scope.property.value && $scope.property.value.formProperties) {
-
-                    var isCustoms = $scope.property.value.formProperties.filter((item) => {
-                        return item.isCustomForm !== true
-                    });
-                    $scope.property.value.formProperties = [...formProperties, ...isCustoms];
+                    //去重
+                    var keys = $scope.property.value.formProperties.map(item => item.id);
+                    formProperties.forEach(fp => {
+                        if (!keys.includes(fp.id)) {
+                            $scope.property.value.formProperties.push(fp)
+                        }
+                    })
                 }
                 // 没有值的情况 添加
                 if (!$scope.property.value) {
