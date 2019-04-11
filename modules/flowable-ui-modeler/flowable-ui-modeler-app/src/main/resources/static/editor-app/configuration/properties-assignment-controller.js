@@ -166,6 +166,9 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
                     $scope.popup.groupFilter = '';
                     $scope.popup.groupResults = [];
                 }
+                if (n.id === 'initiator') {
+                    $scope.popup.assignmentObject.idm.assignee = {};
+                }
             });
             $scope.updateFilter = function() {
                 if ($scope.popup.oldFilter == undefined || $scope.popup.oldFilter != $scope.popup.filter) {
