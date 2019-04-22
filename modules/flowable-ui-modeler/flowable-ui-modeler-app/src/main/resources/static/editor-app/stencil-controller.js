@@ -614,7 +614,7 @@ angular.module('flowableModeler')
 
         /* Click handler for clicking a property */
         $scope.propertyClicked = function (index) {
-            if (!$scope.selectedItem.properties[index].hidden) {
+            if (!$scope.selectedItem.properties[index].hidden && $scope.selectedItem.properties[index].key !== "oryx-process_namespace") {
                 $scope.selectedItem.properties[index].mode = "write";
             }
         };
