@@ -35,11 +35,28 @@ angular
       };
     var json = editorManager.getModel();
     let startNode = {}
-    for (let i = 0; i < json.childShapes.length; i++) {
-      if (json.childShapes[i].stencil.id === 'StartNoneEvent') {
-        startNode = json.childShapes[i]
+    // for (let item of json.childShapes) {
+      
+    //   if (item.stencil.id === 'StartNoneEvent') {
+    //     startNode = json.childShapes[i]
+    //   }
+    // }
+    const findStartNode = (list) => {
+      for (let item of list) {
+        if (item.stencil.id === 'StartNoneEvent') {
+          startNode = item
+        }
+        if (item.childShapes && item.childShapes.length > 0) {
+          findStartNode(item.childShapes)
+        } 
       }
     }
+    findStartNode(json.childShapes)
+    // for (let i = 0; i < json.childShapes.length; i++) {
+    //   if (json.childShapes[i].stencil.id === 'StartNoneEvent') {
+    //     startNode = json.childShapes[i]
+    //   }
+    // }
     let formKey = startNode.properties.formkeydefinition
     let formReference = startNode.properties.formreference
     let condition = '';
@@ -48,7 +65,7 @@ angular
     } else {
       condition = formReference.key;
     }
-      if (condition) {
+      // if (condition) {
         const prefix_request = window.localStorage.getItem('pea_workflow_dynamic_request_prefix');
         // 通过获取表单关键字查询自定义表单里的属性
         let url = `${prefix_request}/msc/PEP_FORM_TEMPLATE?query=${encodeURIComponent(JSON.stringify({ formkeydefinition: 'basicForm' }))}`;
@@ -57,26 +74,27 @@ angular
         // let textArray = ['Select', 'RadioGroup', 'CheckboxGroup', 'OopSystemCurrent', 'DatePicker']
         $http.get(url, {}).success(function (resp, status, headers, config) {
           let url1 = `${prefix_request}/msc/PEP_FORM_TEMPLATE?query=${encodeURIComponent(JSON.stringify({ formkeydefinition: condition }))}`;
-          $http.get(url1, {}).success(function (resp1, status1, headers1, config1) {
-            var result1 = resp1.data[0];
-            let formProperties = [];
-            let textArray = ['Select', 'RadioGroup', 'CheckboxGroup', 'OopSystemCurrent', 'DatePicker']
-            if (result1 && result1.formDetails) {
-              var formJson1 = JSON.parse(result1.formDetails).formJson;
-              formProperties = formJson1.map(item => ({
-                name: item.label,
-                id: item.name,
-                readable: true,
-                writable: true,
-                type: null,
-                isCustomForm: true,
-                componentKey: item.component.name || '',
-                textValue: textArray.indexOf(item.component.name) > -1 ? true : false,
-                children: item.component.children && item.component.children.length > 0 ? item.component.children : []
-              }));
-              $scope.formProperties = formProperties
-            }
-            let result = resp.data[0];
+          if (condition) {
+            $http.get(url1, {}).success(function (resp1, status1, headers1, config1) {
+              var result1 = resp1.data[0];
+              let formProperties = [];
+              let textArray = ['Select', 'RadioGroup', 'CheckboxGroup', 'OopSystemCurrent', 'DatePicker']
+              if (result1 && result1.formDetails) {
+                var formJson1 = JSON.parse(result1.formDetails).formJson;
+                formProperties = formJson1.map(item => ({
+                  name: item.label,
+                  id: item.name,
+                  readable: true,
+                  writable: true,
+                  type: null,
+                  isCustomForm: true,
+                  componentKey: item.component.name || '',
+                  textValue: textArray.indexOf(item.component.name) > -1 ? true : false,
+                  children: item.component.children && item.component.children.length > 0 ? item.component.children : []
+                }));
+                $scope.formProperties = formProperties
+              }
+              let result = resp.data[0];
             if (result && result.formDetails) {
               var formJson = JSON.parse(result.formDetails).formJson;
               basicProperties = formJson.map(item => ({
@@ -160,18 +178,102 @@ angular
               };
             });
             _internalCreateModal(opts, $modal, $scope);
-          }).error(function (data1, status1, headers1, config1) {
-            alert(resp1);
-          })
+     
+            }).error(function (data1, status1, headers1, config1) {
+              alert(resp1);
+            })
+          } else {
+            let result = resp.data[0];
+            if (result && result.formDetails) {
+              var formJson = JSON.parse(result.formDetails).formJson;
+              basicProperties = formJson.map(item => ({
+                name: item.label,
+                id: item.name,
+                readable: true,
+                writable: true,
+                type: null,
+                isCustomForm: true,
+                componentKey: item.component.name || '',
+                textValue: textArray.indexOf(item.component.name) > -1 ? true : false,
+                children: item.component.children && item.component.children.length > 0 ? item.component.children : []
+              }));
+            }
+            $scope.formProperties = [...basicProperties]
+            $scope.enumValues = [];
 
-          // $scope.formProperties = json.childShapes[0].properties.formproperties.formProperties;
-          // Open the dialog
+            $scope.translationsRetrieved = false;
+
+            $scope.labels = {};
+            var idPromise = $translate("PROPERTY.FORMPROPERTIES.ID");
+            var namePromise = $translate("PROPERTY.FORMPROPERTIES.NAME");
+            var typePromise = $translate("PROPERTY.FORMPROPERTIES.TYPE");
+            $q.all([idPromise, namePromise, typePromise]).then(function (results) {
+              $scope.labels.idLabel = results[0];
+              $scope.labels.nameLabel = results[1];
+              $scope.labels.typeLabel = results[2];
+              $scope.translationsRetrieved = true;
+
+              // Config for grid
+              $scope.gridOptions = {
+                data: $scope.formProperties,
+                headerRowHeight: 28,
+                enableRowSelection: true,
+                enableRowHeaderSelection: false,
+                multiSelect: false,
+                modifierKeysToMultiSelect: false,
+                enableHorizontalScrollbar: 0,
+                enableColumnMenus: false,
+                enableSorting: false,
+                columnDefs: [{ field: 'id', displayName: $scope.labels.idLabel },
+                { field: 'name', displayName: $scope.labels.nameLabel },
+                { field: 'type', displayName: $scope.labels.typeLabel }]
+              };
+
+              $scope.enumGridOptions = {
+                data: $scope.enumValues,
+                headerRowHeight: 28,
+                enableRowSelection: true,
+                enableRowHeaderSelection: false,
+                multiSelect: false,
+                modifierKeysToMultiSelect: false,
+                enableHorizontalScrollbar: 0,
+                enableColumnMenus: false,
+                enableSorting: false,
+                columnDefs: [{ field: 'id', displayName: $scope.labels.idLabel },
+                { field: 'name', displayName: $scope.labels.nameLabel }]
+              }
+
+              $scope.gridOptions.onRegisterApi = function (gridApi) {
+                //set gridApi on scope
+                $scope.gridApi = gridApi;
+                gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+                  $scope.selectedProperty = row.entity;
+                  $scope.selectedEnumValue = undefined;
+                  if ($scope.selectedProperty && $scope.selectedProperty.enumValues) {
+                    $scope.enumValues.length = 0;
+                    for (var i = 0; i < $scope.selectedProperty.enumValues.length; i++) {
+                      $scope.enumValues.push($scope.selectedProperty.enumValues[i]);
+                    }
+                  }
+                });
+              };
+
+              $scope.enumGridOptions.onRegisterApi = function (gridApi) {
+                //set gridApi on scope
+                $scope.enumGridApi = gridApi;
+                gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+                  $scope.selectedEnumValue = row.entity;
+                });
+              };
+            });
+            _internalCreateModal(opts, $modal, $scope);
+          }
         }).error(function (data, status, headers, config) {
           alert(data);
         })
-      } else {
-        _internalCreateModal(opts, $modal, $scope);
-      }
+      // } else {
+      //   _internalCreateModal(opts, $modal, $scope);
+      // }
     }
   ]);
 
