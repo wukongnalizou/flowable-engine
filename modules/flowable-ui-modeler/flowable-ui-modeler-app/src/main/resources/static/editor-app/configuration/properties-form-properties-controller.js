@@ -20,8 +20,15 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesCtrl',
         // Start 覆盖原来的代码
         // 获取表单关键字
         //const formkeydefinition = jQuery('#oryx-formkeydefinition').text().trim();
-        const formkeydefinition = $scope.selectedItem.properties.find(it => it.key === "oryx-formkeydefinition").value;
+        let formkeydefinition = $scope.selectedItem.properties.find(it => it.key === "oryx-formkeydefinition").value;
         const formreference = $scope.selectedItem.properties.find(it => it.key === "oryx-formreference").value.key;
+        let pupa = false;
+        let detail = 'formDetails'
+        if (formkeydefinition.indexOf('@') === 0) {
+            formkeydefinition = formkeydefinition.substring(1,formkeydefinition.length);
+            pupa = true;
+            detail = 'formConfig'
+        }
         var condition = '';
         if (formkeydefinition) {
             condition = formkeydefinition;
@@ -30,14 +37,18 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesCtrl',
         }
         const prefix_request = window.localStorage.getItem('pea_workflow_dynamic_request_prefix');
         // 通过获取表单关键字查询自定义表单里的属性
-        var url = `${prefix_request}/msc/PEP_FORM_TEMPLATE?query=${encodeURIComponent(JSON.stringify({ formkeydefinition: condition }))}`;
+        let url;
+        if (pupa) {
+            url = `${prefix_request}/msc/PEP_DEVTOOLS_CUSTOMQUERY?query=${encodeURIComponent(JSON.stringify({ code: condition}))}`;
+        } else {
+            url = `${prefix_request}/msc/PEP_FORM_TEMPLATE?query=${encodeURIComponent(JSON.stringify({ formkeydefinition: condition }))}`;
+        }
         $http.get(url, {}).success(function (resp, status, headers, config) {
-            console.log(resp, status);
             var result = resp.data[0];
             var formProperties = [];
             let textArray = ['Select', 'RadioGroup', 'CheckboxGroup', 'OopSystemCurrent', 'DatePicker']
-            if (result && result.formDetails) {
-                var formJson = JSON.parse(result.formDetails).formJson;
+            if (result && result[detail]) {
+                var formJson = JSON.parse(result[detail]).formJson;
                 formProperties = formJson.map(item => ({
                     name: item.label,
                     id: item.name,
@@ -54,6 +65,10 @@ angular.module('flowableModeler').controller('FlowableFormPropertiesCtrl',
                 }
                 // 有值的情况 合并
                 if ($scope.property.value && $scope.property.value.formProperties) {
+                    const CustomFormProperties = $scope.property.value.formProperties.filter((item) => {
+                        return !item.isCustomForm
+                    })
+                    $scope.property.value.formProperties = CustomFormProperties;
                     //去重
                     var keys = $scope.property.value.formProperties.map(item => item.id);
                     formProperties.forEach(fp => {
