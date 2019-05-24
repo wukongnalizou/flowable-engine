@@ -57,11 +57,18 @@ angular
     //     startNode = json.childShapes[i]
     //   }
     // }
-    let formKey = startNode.properties.formkeydefinition
+    let formkeydefinition = startNode.properties.formkeydefinition
     let formReference = startNode.properties.formreference
+    let pupa = false;
+    let detail = 'formDetails'
+    if (formkeydefinition.indexOf('@') === 0) {
+        formkeydefinition = formkeydefinition.substring(1,formkeydefinition.length);
+        pupa = true;
+        detail = 'formConfig'
+    }
     let condition = '';
-      if (formKey) {
-      condition = formKey;
+      if (formkeydefinition) {
+      condition = formkeydefinition;
     } else {
       condition = formReference.key;
     }
@@ -73,14 +80,20 @@ angular
         $scope.formProperties = []
         // let textArray = ['Select', 'RadioGroup', 'CheckboxGroup', 'OopSystemCurrent', 'DatePicker']
         $http.get(url, {}).success(function (resp, status, headers, config) {
-          let url1 = `${prefix_request}/msc/PEP_FORM_TEMPLATE?query=${encodeURIComponent(JSON.stringify({ formkeydefinition: condition }))}`;
+          let url1;
+          if (pupa) {
+              url1 = `${prefix_request}/msc/PEP_DEVTOOLS_CUSTOMQUERY?query=${encodeURIComponent(JSON.stringify({ code: condition}))}`;
+          } else {
+              url1 = `${prefix_request}/msc/PEP_FORM_TEMPLATE?query=${encodeURIComponent(JSON.stringify({ formkeydefinition: condition }))}`;
+          }
+          // let url1 = `${prefix_request}/msc/PEP_FORM_TEMPLATE?query=${encodeURIComponent(JSON.stringify({ formkeydefinition: condition }))}`;
           if (condition) {
             $http.get(url1, {}).success(function (resp1, status1, headers1, config1) {
               var result1 = resp1.data[0];
               let formProperties = [];
               let textArray = ['Select', 'RadioGroup', 'CheckboxGroup', 'OopSystemCurrent', 'DatePicker']
-              if (result1 && result1.formDetails) {
-                var formJson1 = JSON.parse(result1.formDetails).formJson;
+              if (result1 && result1[detail]) {
+                var formJson1 = JSON.parse(result1[detail]).formJson;
                 formProperties = formJson1.map(item => ({
                   name: item.label,
                   id: item.name,
