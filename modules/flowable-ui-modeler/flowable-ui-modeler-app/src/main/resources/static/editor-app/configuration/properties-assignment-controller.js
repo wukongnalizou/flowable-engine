@@ -29,7 +29,7 @@ angular.module('flowableModeler').controller('FlowableAssignmentCtrl', [ '$scope
 }]);
 // 根据需求增加service动态获取内容
 angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
-    [ '$rootScope', '$scope', '$translate', '$http', 'UserService', 'GroupService', 'assignService', function($rootScope, $scope, $translate, $http, UserService, GroupService, assignService) {
+    [ '$rootScope', '$scope', '$translate', '$http', 'UserService', 'GroupService', 'assignService','ruleService', function($rootScope, $scope, $translate, $http, UserService, GroupService, assignService, ruleService) {
     // Put json representing assignment on scope
     if ($scope.property.value !== undefined && $scope.property.value !== null
         && $scope.property.value.assignment !== undefined
@@ -68,39 +68,108 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
         // {id: "users", name: $translate.instant('PROPERTY.ASSIGNMENT.IDM.DROPDOWN.USERS')},
         // {id: "groups", title: $translate.instant('PROPERTY.ASSIGNMENT.IDM.DROPDOWN.GROUPS')}
     ];
+    $scope.ruleOption = [
+        // {id: "rule1", name: "规则1", type: "role"},
+        // {id: "rule2", name: "规则2", type: "fff"}
+    ]
     //获取option接口 需接口返回后执行下面逻辑
-    $scope.updateAssign = function() {
+
         assignService.getFilterAssign().then(function(result) {
-            console.log(result)
-            for (var i = 0; i < result.length; i++) {
-                if (result[i].type === 'USER') {
-                    result[i].id = 'users'
-                } else {
-                    // result[i].id = result[i].type
-                    result[i].id = 'groups'
-                }
-            }
-            $scope.assignmentOptions = $scope.assignmentOptions.concat(result)
-            if ($scope.assignment.idm && $scope.assignment.idm.type) {
-                if ($scope.assignment.idm.type ==='groups') {
-                    for (var i = 0; i < $scope.assignmentOptions.length; i++) {
-                        let type = $scope.assignment.idm.candidateGroups[0].id.split('_')
-                        type = type[type.length - 1]
-                        if ($scope.assignmentOptions[i].type == type) {
-                            $scope.assignmentOption = $scope.assignmentOptions[i];
-                            break;
-                        }
-                    }
-                } else {
-                    for (var i = 0; i < $scope.assignmentOptions.length; i++) {
-                        if ($scope.assignmentOptions[i].id == $scope.assignment.idm.type) {
-                            $scope.assignmentOption = $scope.assignmentOptions[i];
-                            break;
-                        }
+            return new Promise((resolve, reject) => {
+                for (var i = 0; i < result.length; i++) {
+                    if (result[i].type === 'USER') {
+                        result[i].id = 'users'
+                    } else {
+                        // result[i].id = result[i].type
+                        result[i].id = 'groups'
                     }
                 }
-            }
-        
+                $scope.assignmentOptions = $scope.assignmentOptions.concat(result)
+                return resolve();
+            })
+        }).then(() => {
+            return new Promise((resolve) => {
+                ruleService.getRules().then(function(res) {
+                    for (var i = 0; i < res.length; i++) {
+                        res[i].service = res[i].id;
+                        res[i].id = 'rules';
+                    }
+                    $scope.assignmentOptions = $scope.assignmentOptions.concat(res)
+                    return resolve();
+                })
+            })
+        }).then(() => {
+            return $scope.computedOption();
+        }).then(()=>{
+            $scope.updateAssign();
+        });
+        $scope.computedOption = () => {
+            return new Promise((resolve) => {
+                if ($scope.assignment.idm && $scope.assignment.idm.type) {
+                    const reg = /(?<={).*?(?=.perform)/g;
+                    if ($scope.assignment.idm.type ==='groups') {
+                        const id = $scope.assignment.idm.candidateGroups[0].id
+                        if (id.match(reg)) {
+                            const service = id.match(reg)[0]
+                            for (var i = 0; i < $scope.assignmentOptions.length; i++) {
+                                if ($scope.assignmentOptions[i].service == service) {
+                                    $scope.assignmentOption = $scope.assignmentOptions[i];
+                                    GroupService.getFilteredGroups($scope.assignmentOption.type).then((res) => {
+                                        // 规则下选项
+                                        $scope.ruleChilds = res;
+                                        resolve();
+                                    })
+                                }
+                            }
+                        } else {
+                            for (var i = 0; i < $scope.assignmentOptions.length; i++) {
+                                let type = $scope.assignment.idm.candidateGroups[0].id.split('_')
+                                type = type[type.length - 1]
+                                if ($scope.assignmentOptions[i].type == type) {
+                                    $scope.assignmentOption = $scope.assignmentOptions[i];
+                                    break;
+                                }
+                            }
+                            resolve();
+                        }
+                    } else if ($scope.assignment.idm.type ==='users') {
+                        const id = $scope.assignment.idm.candidateUsers[0].id
+                        if (id.match(reg)) {
+                            const service = id.match(reg)[0]
+                            for (var i = 0; i < $scope.assignmentOptions.length; i++) {
+                                if ($scope.assignmentOptions[i].service == service) {
+                                    $scope.assignmentOption = $scope.assignmentOptions[i];
+                                    GroupService.getFilteredGroups($scope.assignmentOption.type).then((res) => {
+                                        // 规则下选项
+                                        $scope.ruleChilds = res;
+                                        resolve();
+                                    })
+                                }
+                            }
+                        } else {
+                            for (var i = 0; i < $scope.assignmentOptions.length; i++) {
+                                if ($scope.assignmentOptions[i].id == $scope.assignment.idm.type) {
+                                    $scope.assignmentOption = $scope.assignmentOptions[i];
+                                    break;
+                                }
+                            }
+                            resolve();
+                        }
+                    } else {
+                        for (var i = 0; i < $scope.assignmentOptions.length; i++) {
+                            if ($scope.assignmentOptions[i].id == $scope.assignment.idm.type) {
+                                $scope.assignmentOption = $scope.assignmentOptions[i];
+                                break;
+                            }
+                        }
+                        resolve();
+                    }
+                } else {
+                    resolve();
+                }
+            })
+        }
+        $scope.updateAssign = function() {
             // fill the IDM area
             if (!$scope.assignmentOption) {
                 // Default, first time opening the popup
@@ -108,6 +177,7 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
             } else {
                 // Values already filled
                 if ($scope.assignment.idm) { //fill the IDM tab
+                    const augReg = /(?<=execution,).*?(?=\))/g;
                     if ($scope.assignment.idm.assignee) {
                         if ($scope.assignment.idm.assignee.id) {
                             $scope.popup.assignmentObject.idm.assignee = $scope.assignment.idm.assignee;
@@ -115,16 +185,46 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
                             $scope.popup.assignmentObject.idm.assignee = {email: $scope.assignment.idm.assignee.email};
                         }
                     }
-        
                     if ($scope.assignment.idm.candidateUsers && $scope.assignment.idm.candidateUsers.length > 0) {
-                        for (var i = 0; i < $scope.assignment.idm.candidateUsers.length; i++) {
-                            $scope.popup.assignmentObject.idm.candidateUsers.push($scope.assignment.idm.candidateUsers[i]);
+                        if ($scope.assignment.idm.candidateUsers[0].id.match(augReg)) {
+                            let users = $scope.assignment.idm.candidateUsers[0].id.match(augReg)
+                            users = users[0].split(',');
+                            for ( let j = 0; j < users.length; j++) {
+                                //去掉引号
+                                users[j] = users[j].replace(/'/g, '');
+                                let ruleArg;
+                                for (let k = 0; k < $scope.ruleChilds.length; k++) {
+                                    if ($scope.ruleChilds[k].id == users[j]) {
+                                        ruleArg = $scope.ruleChilds[k]
+                                    }
+                                }
+                                $scope.popup.assignmentObject.idm.candidateUsers.push(ruleArg);
+                            }
+                        } else {
+                            for (var i = 0; i < $scope.assignment.idm.candidateUsers.length; i++) {
+                                $scope.popup.assignmentObject.idm.candidateUsers.push($scope.assignment.idm.candidateUsers[i]);
+                            }
                         }
                     }
-        
                     if ($scope.assignment.idm.candidateGroups && $scope.assignment.idm.candidateGroups.length > 0) {
-                        for (var i = 0; i < $scope.assignment.idm.candidateGroups.length; i++) {
-                            $scope.popup.assignmentObject.idm.candidateGroups.push($scope.assignment.idm.candidateGroups[i]);
+                        if($scope.assignment.idm.candidateGroups[0].id.match(augReg)) {
+                            let groups = $scope.assignment.idm.candidateGroups[0].id.match(augReg)
+                            groups = groups[0].split(',');
+                            for ( let j = 0; j < groups.length; j++) {
+                                //去掉引号
+                                groups[j] = groups[j].replace(/'/g, '');
+                                let ruleArg;
+                                for (let k = 0; k < $scope.ruleChilds.length; k++) {
+                                    if ($scope.ruleChilds[k].id == groups[j]) {
+                                        ruleArg = $scope.ruleChilds[k]
+                                    }
+                                }
+                                $scope.popup.assignmentObject.idm.candidateGroups.push(ruleArg);
+                            }
+                        } else {
+                            for (var i = 0; i < $scope.assignment.idm.candidateGroups.length; i++) {
+                                $scope.popup.assignmentObject.idm.candidateGroups.push($scope.assignment.idm.candidateGroups[i]);
+                            }
                         }
                     }
                 }
@@ -146,12 +246,10 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
                     $scope.popup.assignmentObject.static.candidateGroups.push($scope.assignment.candidateGroups[i]);
                 }
             }
-        
             initStaticContextForEditing($scope);
             $scope.$watch('popup.groupFilter', function () {
                 $scope.updateGroupFilter();
             });
-        
             $scope.$watch('popup.filter', function() {
                 $scope.updateFilter();
             });
@@ -165,9 +263,26 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
                     $scope.popup.assignmentObject.idm.candidateGroups = [];
                     $scope.popup.groupFilter = '';
                     $scope.popup.groupResults = [];
+                    $scope.popup.assignmentObject.idm.candidateUsers = [];
+                    $scope.popup.usersFilter = '';
+                    $scope.popup.userResults = [];
                 }
                 if (n.id === 'initiator') {
                     $scope.popup.assignmentObject.idm.assignee = {};
+                }
+            });
+            //监听规则变化
+            $scope.$watch('popup.ruleFilter', function() {
+                const ruleObj = $scope.assignmentOption;
+                if($scope.popup.ruleFilter && ruleObj.type) {
+                    GroupService.getFilteredGroups(ruleObj.type, $scope.popup.ruleFilter).then(function(result) {
+                        if (ruleObj.returnType === 'GROUP') {
+                            $scope.popup.groupResults = result;
+                        } else if (ruleObj.returnType === 'USER') {
+                            $scope.popup.usersResults = result;
+                        }
+                        // $scope.resetGroupSelection();
+                    });
                 }
             });
             $scope.updateFilter = function() {
@@ -216,7 +331,7 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
                         $scope.popup.oldUsersFilter = $scope.popup.usersFilter;
                     }
                     if ($scope.popup.usersFilter !== null && $scope.popup.usersFilter !== undefined) {
-                        GroupService.getFilteredGroups($scope.popup.usersFilter, $scope.assignmentOption.type).then(function (result) {
+                        GroupService.getFilteredGroups($scope.assignmentOption.type, $scope.popup.usersFilter).then(function (result) {
                             $scope.popup.usersResults = result;
                             $scope.resetSelection();
                         });
@@ -233,7 +348,7 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
                     }
                     //加入非空判断
                     if ($scope.popup.groupFilter !== null && $scope.popup.groupFilter !== undefined) {
-                        GroupService.getFilteredGroups($scope.popup.groupFilter, $scope.assignmentOption.type).then(function(result) {
+                        GroupService.getFilteredGroups($scope.assignmentOption.type, $scope.popup.groupFilter).then(function(result) {
                             $scope.popup.groupResults = result;
                             $scope.resetGroupSelection();
                         });
@@ -253,7 +368,7 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
                 if (user) {
                     if ("user" == $scope.assignmentOption.id) {
                         $scope.popup.assignmentObject.idm.assignee = user;
-                    } else if ("users" == $scope.assignmentOption.id) {
+                    } else if ("users" == $scope.assignmentOption.id || "rules" == $scope.assignmentOption.id) {
         
                         // Only add if not yet part of candidate users
                         var found = false;
@@ -460,7 +575,7 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
                 $scope.assignment.type = $scope.popup.assignmentObject.type;
         
                 if ('idm' === $scope.popup.assignmentObject.type) { // IDM
-                    if (JSON.stringify($scope.popup.assignmentObject.idm.assignee) != undefined || $scope.popup.assignmentObject.idm.candidateGroups.length > 0 || $scope.popup.assignmentObject.idm.candidateUsers.length > 0 ) {
+                    if (JSON.stringify($scope.popup.assignmentObject.idm.assignee) != undefined || $scope.popup.assignmentObject.idm.candidateGroups.length > 0 || $scope.popup.assignmentObject.idm.candidateUsers.length > 0 || $scope.assignmentOption.id == 'rules') {
                         $scope.popup.assignmentObject.static = undefined;
 
                         //Construct an IDM object to be saved to the process model.
@@ -472,6 +587,40 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
                         } else if ('users' == idm.type) {
                             if ($scope.popup.assignmentObject.idm.candidateUsers && $scope.popup.assignmentObject.idm.candidateUsers.length > 0) {
                                 idm.candidateUsers = $scope.popup.assignmentObject.idm.candidateUsers;
+                            }
+                        } else if ('rules' == idm.type) {
+                            if ($scope.assignmentOption.returnType === 'GROUP') {
+                                if ($scope.assignmentOption.needParam) {
+                                    let ids = $scope.popup.assignmentObject.idm.candidateGroups.map((item) => {
+                                        return `'${item.id}'`;
+                                    })
+                                    idm.candidateGroups = [{
+                                        id: '${'+ $scope.assignmentOption.service +'.perform(execution,'+ ids.join(',') +')}',
+                                        typeName: $scope.assignmentOption.name
+                                    }]
+                                } else {
+                                    idm.candidateGroups = [{
+                                        id: '${'+ $scope.assignmentOption.service +'.perform(execution)}',
+                                        typeName: $scope.assignmentOption.name
+                                    }]
+                                }
+                                idm.type = 'groups'
+                            } else if ($scope.assignmentOption.returnType === 'USER') {
+                                if ($scope.assignmentOption.needParam) {
+                                    let ids = $scope.popup.assignmentObject.idm.candidateUsers.map((item) => {
+                                        return `'${item.id}'`;
+                                    })
+                                    idm.candidateUsers = [{
+                                        id: '${'+ $scope.assignmentOption.service +'.perform(execution,'+ ids.join(',') +')}',
+                                        typeName: $scope.assignmentOption.name
+                                    }]
+                                } else {
+                                    idm.candidateUsers = [{
+                                        id: '${'+ $scope.assignmentOption.service +'.perform(execution)}',
+                                        typeName: $scope.assignmentOption.name
+                                    }]
+                                }
+                                idm.type = 'users'
                             }
                         } else {
                             //其他添加类型服用候选人组
@@ -563,7 +712,6 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
             };
             
             function initStaticContextForEditing($scope) {
-                console.log($scope)
                 if (!$scope.popup.assignmentObject.static.candidateUsers || $scope.popup.assignmentObject.static.candidateUsers.length==0) {
                   $scope.popup.assignmentObject.static.candidateUsers = [{value: ''}];
                 }
@@ -571,9 +719,6 @@ angular.module('flowableModeler').controller('FlowableAssignmentPopupCtrl',
                   $scope.popup.assignmentObject.static.candidateGroups = [{value: ''}];
                 }
             }
-        });
+            
     };
-    $scope.updateAssign();
-
-    
 }]);
