@@ -234,12 +234,19 @@ FLOWABLE.APP_URL = {
     getAssignGroup: function () {
         return FLOWABLE.CONFIG.contextRoot + '/ext/idm/conf';
     },
+    getAssignRule: function() {
+        return FLOWABLE.CONFIG.contextRoot + '/ext/modeler/rule';
+    },
     getEditorUsersUrl: function () {
         return FLOWABLE.CONFIG.contextRoot +'/ext/modeler/assignee';
     },
 
     getEditorGroupsUrl: function (params) {
-        return FLOWABLE.CONFIG.contextRoot +'/ext/modeler/candidate/' + params.type + '?name=' + params.filter;
+        if (params.filter) {
+            return FLOWABLE.CONFIG.contextRoot +'/ext/modeler/candidate/' + params.type + '?name=' + params.filter;
+        } else {
+            return FLOWABLE.CONFIG.contextRoot +'/ext/modeler/candidate/' + params.type;
+        }
     },
 
     getAboutInfoUrl: function () {

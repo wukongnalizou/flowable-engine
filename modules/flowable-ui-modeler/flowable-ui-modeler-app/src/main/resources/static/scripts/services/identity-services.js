@@ -66,7 +66,7 @@ angular.module('flowableModeler').service('GroupService', ['$http', '$q',
         /*
          * Filter functional groups based on a filter text.
          */
-        this.getFilteredGroups = function (filterText, filterType) {
+        this.getFilteredGroups = function (filterType, filterText) {
             var params;
             if(filterText && filterType) {
                 params = 
@@ -74,6 +74,10 @@ angular.module('flowableModeler').service('GroupService', ['$http', '$q',
                     filter: filterText,
                     type: filterType
                 };
+            } else if(filterType) {
+                params = {
+                    type: filterType
+                }
             }
 
             return httpAsPromise({
@@ -109,6 +113,37 @@ angular.module('flowableModeler').service('assignService', ['$http', '$q',
             return httpAsPromise({
                 method: 'GET',
                 url: FLOWABLE.APP_URL.getAssignGroup(),
+                params: params
+            });
+        };
+    }]);
+        // 规则选项
+angular.module('flowableModeler').service('ruleService', ['$http', '$q',
+    function ($http, $q) {
+
+        var httpAsPromise = function(options) {
+            var deferred = $q.defer();
+            $http(options).
+                success(function (response, status, headers, config) {
+                    deferred.resolve(response);
+                })
+                .error(function (response, status, headers, config) {
+                    deferred.reject(response);
+                });
+            return deferred.promise;
+        };
+
+        /*
+        * Filter functional groups based on a filter text.
+        */
+        this.getRules = function (filterText) {
+            var params;
+            if(filterText) {
+                params = {filter: filterText};
+            }
+            return httpAsPromise({
+                method: 'GET',
+                url: FLOWABLE.APP_URL.getAssignRule(),
                 params: params
             });
         };
