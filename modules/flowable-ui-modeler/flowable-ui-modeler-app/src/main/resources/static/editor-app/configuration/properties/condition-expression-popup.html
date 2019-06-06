@@ -23,14 +23,14 @@
                     </div>
                 </div>
                 
-                <textarea class="form-control" ng-model="expression.natureValue" style="min-height: 172px;resize:none" />
+                <textarea id="abc" class="form-control" ng-model="expression.natureValue" style="min-height: 172px;resize:none" />
             </div>
         </div>
         <div class="row row-no-gutter">
             <div class="col-xs-6">
                 <div>操作符</div>
                 <div class="operationDiv" ng-repeat="operation in operations" ng-mouseenter="hover(operation)" ng-mouseleave="leave()">
-                    <span class="operationSpan" >{{operation.title}}</span>
+                    <span class="operationSpan" ng-click="operationClick(operation)">{{operation.title}}</span>
                     <div class="operationModel" ng-if="selectdItem === operation.title">
                         <div class="operationDes">{{operation.des}}</div>
                         <div class="operationExa">{{operation.exa}}</div>
@@ -38,9 +38,9 @@
                 </div>
             </div>
             <div class="col-xs-6">
-                <div>示例：${部门} == "研发部" && (${事假天数} + ${调休天数}) > 3</div>
-                <div>说明：部门等于研发部并且事假天数加调休天数大于3</div>
-                <div>备注：${}内为属性名称，不能为属性id</div>
+                <div>{{stringText[0]}}</div>
+                <div>{{stringText[1]}}</div>
+                <div>{{stringText[2]}}</div>
                 <div style="text-decoration:underline;color:#0000FF;text-align: right; cursor: pointer" ng-click="showMore()">查看更多</div>
             </div>
         </div>
@@ -64,7 +64,7 @@
                 <p>1、分支条件使用基于UEL的语法规则的表达式实现分支的选择，表达式计算结果为真时选择分支，为假时不选择。</p>
                 <p>2、表达式可以用键盘直接输入和删除。</p>
                 <p>3、运算符要使用英文符号，不能使用中文符号。</p>
-                <p>4、字段必须是包含在表单内组件，字段前加“$”号用{}包裹。比较的值的类型必须与字段类型匹配。</p>
+                <p>{{stringText[3]}}</p>
                 <p>5、用括号体现运算优先级，并支持嵌套括号。</p>
                 <p>6、比较值是字符串类型（包括日期和时间类型）的数据加双引号，数值类型不用加。</p>
                 <p>7、优先级：括号>四则预算>关系运算>逻辑运算。</p>
@@ -73,22 +73,28 @@
                 <p>10、表达式要符合语法规则，否则无法保存，也不能计算出结果。</p>
                 <p>运算符说明：</p>
                 <p>一、关系运算符</p>
-                <p>1、>：大于。示例：${请假天数} > 3。</p>
-                <p>2、>=：大于等于。示例：${请假天数} >= 3。</p>
-                <p>3、==：等于。示例：${部门} == "研发部"。</p>
-                <p>4、<=：小于等于。示例：${报销金额} <=100。</p>
-                <p>5、<：小于。示例：${报销金额} < 100。</p>
-                <p>6、!=：不等于。示例：${部门} != "研发部"。</p>
+                <p>{{stringText[4]}}</p>
+                <p>{{stringText[5]}}</p>
+                <p>{{stringText[6]}}</p>
+                <p>{{stringText[7]}}</p>
+                <p>{{stringText[8]}}</p>
+                <p>{{stringText[9]}}</p>
                 <p>二、四则运算符</p>
-                <p>1、+：加。示例：(${事假天数} + ${调休天数}) > 3。</p>
-                <p>2、-：减（或负号）。示例：(${加班天数} - ${调休天数}) > 1。</p>
-                <p>3、*：乘。示例：(${单价} * ${数量}) > 100。</p>
-                <p>4、/：除。示例：(${金额} / ${数量}) < 10。</p>
+                <p>{{stringText[10]}}</p>
+                <p>{{stringText[11]}}</p>
+                <p>{{stringText[12]}}</p>
+                <p>{{stringText[13]}}</p>
                 <p>三、逻辑运算符</p>
-                <p>1、&&：并且。示例：${部门} == "研发部" && ${请假天数} > 3。</p>
-                <p>2、||：或者。示例：${部门} == "研发部" || ${请假天数} > 3。</p>
-                <p>3、!：取反。示例：!(${部门} == "研发部" )。</p>
-                <p>4、( )：括号。示例：(${事假天数} + ${调休天数}) > 3。</p>
+                <p>{{stringText[14]}}</p>
+                <p>{{stringText[15]}}</p>
+                <p>{{stringText[16]}}</p>
+                <p>{{stringText[17]}}</p>
+                <p>
+                    <a href="https://www.flowable.org/docs/userguide/index.html#expressionsFunctions" target="_blank">flowable提供的扩展条件方法</a>
+                </p>
+                <p>
+                    <a href="https://docs.oracle.com/javaee/7/tutorial/jsf-el.htm#GJDDD" target="_blank">uel文档</a>
+                </p>
             </div>
         </div>
 </div>

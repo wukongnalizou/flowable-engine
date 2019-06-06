@@ -439,9 +439,7 @@
                   class="form-control"
                   type="text"
                   id="people-select-input"
-                  placeholder="{{
-                    'PROPERTY.ASSIGNMENT.PLACEHOLDER-SEARCHGROUP' | translate
-                  }}"
+                  placeholder="搜索{{assignmentOption.name}}"
                   auto-focus
                   custom-keys
                   up-pressed="previousGroup()"
@@ -487,16 +485,70 @@
             </div>
           </div>
           <!--规则-->
-          <div
+          <!-- <div
             class="form-group clearfix"
             ng-show="popup.assignmentObject.type == 'idm' && assignmentOption.id == 'rules' && assignmentOption.needParam"
           >
+
+          </div> -->
+          <!--规则模板-->
+          <div
+            class="form-group clearfix"
+            ng-if="popup.assignmentObject.type == 'idm' && (!popup.assignmentObject.assignmentSourceType || popup.assignmentObject.assignmentSourceType == 'search') && assignmentOption.id == 'rules' && assignmentOption.needParam"
+          >
+            <!--规则参数开始-->
             <div class="col-xs-12">
               <div class="col-xs-4">
-                <label>{{
-                  'PROPERTY.ASSIGNMENT.CANDIDATE_GROUPS'
-                    | translate: assignmentOption
-                }}</label>
+                <label>已设定的流程变量</label>
+              </div>
+              <div class="col-xs-8 clearfix">
+                <ul
+                  class="simple-list"
+                  ng-show="popup.assignmentObject.idm.candidateRules.length"
+                >
+                  <li
+                    ng-repeat="group in popup.assignmentObject.idm.candidateRules"
+                  >
+                    {{ group }}
+                    <div class="actions">
+                      <a ng-click="removeCandidateRules(group)"
+                        ><i class="icon icon-remove"></i
+                      ></a>
+                    </div>
+                  </li>
+                </ul>
+                <div
+                  class="no-results"
+                  ng-if="!popup.assignmentObject.idm.candidateRules || !popup.assignmentObject.idm.candidateRules.length"
+                >
+                  没有填写流程变量...
+                </div>
+              </div>
+            </div>
+            <div class=" form-group col-xs-12">
+              <div class="col-xs-4">
+                <label>流程变量</label>
+              </div>
+              <div class="col-xs-6">
+                <input
+                  class="form-control"
+                  type="text"
+                  id="people-select-input"
+                  placeholder="请填写流程变量"
+                  auto-focus
+                  custom-keys
+                  delayed-model="popup.ruleArg"
+                  delay="200"
+                />
+              </div>
+              <div class="col-xs-2">
+                <button ng-click="ruleArgConfirm()" class="btn btn-primary" translate>确定</button>
+              </div>
+            </div>
+            <!--规则参数结束-->
+            <div class="col-xs-12">
+              <div class="col-xs-4">
+                <label>{{assignmentOption.typeName}}</label>
               </div>
               <div class="col-xs-8 clearfix" ng-show="assignmentOption.returnType == 'GROUP'">
                 <ul
@@ -528,10 +580,7 @@
                   class="no-results"
                   ng-if="(!popup.assignmentObject.idm.candidateGroups || !popup.assignmentObject.idm.candidateGroups.length) && (!popup.assignmentObject.idm.candidateGroupFields || !popup.assignmentObject.idm.candidateGroupFields.length)"
                 >
-                  {{
-                    'PROPERTY.ASSIGNMENT.IDM.NO_CANDIDATE_GROUPS'
-                      | translate: assignmentOption
-                  }}
+                  没有选择{{ assignmentOption.typeName }}...
                 </div>
               </div>
               <div class="col-xs-8 clearfix" ng-show="assignmentOption.returnType == 'USER'">
@@ -569,26 +618,20 @@
                   class="no-results"
                   ng-if="(!popup.assignmentObject.idm.candidateUsers || !popup.assignmentObject.idm.candidateUsers.length) && (!popup.assignmentObject.idm.candidateUserFields || !popup.assignmentObject.idm.candidateUserFields.length)"
                 >
-                  {{ 'PROPERTY.ASSIGNMENT.IDM.NO_CANDIDATE_USERS' | translate }}
+                  没有选择{{ assignmentOption.typeName }}...
                 </div>
               </div>
             </div>
-          </div>
-          <!--规则模板-->
-          <div
-            class="form-group clearfix"
-            ng-if="popup.assignmentObject.type == 'idm' && (!popup.assignmentObject.assignmentSourceType || popup.assignmentObject.assignmentSourceType == 'search') && assignmentOption.id == 'rules' && assignmentOption.needParam"
-          >
             <div class="col-xs-12">
               <div class="col-xs-4">
-                <label>规则参数</label>
+                <label>搜索</label>
               </div>
               <div class="col-xs-8">
                 <input
                   class="form-control"
                   type="text"
                   id="people-select-input"
-                  placeholder="请选择规则"
+                  placeholder="搜索{{assignmentOption.typeName}}"
                   auto-focus
                   custom-keys
                   up-pressed="previousGroup()"

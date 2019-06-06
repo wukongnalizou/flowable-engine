@@ -368,131 +368,130 @@ angular
         } else {
           $scope.expression = {};
         }
-      // if (
-      //   $scope.property.value !== undefined &&
-      //   $scope.property.value !== null &&
-      //   $scope.property.value.expression !== undefined &&
-      //   $scope.property.value.expression !== null
-      // ) {
-      //   $scope.expression = $scope.property.value.expression;
-      //   if ($scope.property.value.expression.natureValue) {
-      //     natureValue = $scope.property.value.expression.natureValue
-      //   }
-      //   $scope.expression = {
-      //     type: $scope.property.value.expression.type,
-      //     staticValue: $scope.property.value.expression.staticValue,
-      //     natureValue: natureValue
-      //   }
-      // } else if (
-      //   $scope.property.value !== undefined &&
-      //   $scope.property.value !== null &&
-      //   $scope.property.value !== ''
-      // ) {
-      //   let params = {
-      //     sequenceCondition: $scope.property.value,
-      //     params: $scope.formProperties,
-      //     parserEnum: 'TONATUAL', // TOFLOWABLE 转为flowable TONATUAL转为自然语言
-      //   };
-      //   $http({
-      //     method: 'POST',
-      //     data: params,
-      //     ignoreErrors: true,
-      //     headers: {
-      //       'Accept': 'application/json',
-      //     },
-      //     url: FLOWABLE.APP_URL.checkCondition()
-      //   }).success(function (data, status, headers, config) {
-      //     $scope.expression = {
-      //       type: "static",
-      //       staticValue: $scope.property.value,
-      //       natureValue: data.sequenceCondition
-      //     }
-      //   }).error(function (data, status, headers, config) {
-      //     alert(data)
-      //   });
-      // } else {
-      //   $scope.expression = {};
-      // }
       $scope.info = false;
+      // $scope.focusChange = false;
       $scope.operations = [
         {
           title: '>',
           des: '大于',
-          exa: '${请假天数} > 3'
+          exa: '{{请假天数}} > 3'
         },
         {
           title: '>=',
           des: '大于等于',
-          exa: '${请假天数} >= 3'
+          exa: '{{请假天数}} >= 3'
         },
         {
           title: '==',
           des: '等于',
-          exa: '${部门} == "研发部"'
+          exa: '{{部门}} == "研发部"'
         },
         {
           title: '<=',
           des: '小于等于',
-          exa: '${报销金额} <= 100'
+          exa: '{{报销金额}} <= 100'
         },
         {
           title: '<',
           des: '小于',
-          exa: '${报销金额} < 100'
+          exa: '{{报销金额}} < 100'
         },
         {
           title: '!=',
           des: '不等于',
-          exa: '${部门} != "研发部"'
+          exa: '{{部门}} != "研发部"'
         },
         {
           title: '+',
           des: '加',
-          exa: '(${事假天数} + ${调休天数}) > 3'
+          exa: '({{事假天数}} + {{调休天数}}) > 3'
         },
         {
           title: '-',
           des: '减',
-          exa: '(${加班天数} - ${调休天数}) > 1'
+          exa: '({{加班天数}} - {{调休天数}}) > 1'
         },
         {
           title: '*',
           des: '乘',
-          exa: '(${单价} * ${数量}) > 100'
+          exa: '({{单价}} * {{数量}}) > 100'
         },
         {
           title: '/',
           des: '除',
-          exa: '(${金额} / ${数量}) < 10'
+          exa: '({{金额}} / {{数量}}) < 10'
         },
         {
           title: '&&',
           des: '并且',
-          exa: '${部门} == "研发部" && ${请假天数} > 3'
+          exa: '{{部门}} == "研发部" && {{请假天数}} > 3'
         },
         {
           title: '||',
           des: '或者',
-          exa: '${部门} == "研发部" || ${请假天数} > 3'
+          exa: '{{部门}} == "研发部" || {{请假天数}} > 3'
         },
         {
           title: '!',
           des: '取反',
-          exa: '!(${部门} == "研发部")'
+          exa: '!({{部门}} == "研发部")'
         },
         {
           title: '( )',
           des: '括号',
-          exa: '(${事假天数} + ${调休天数}) > 3'
+          exa: '({{事假天数}} + {{调休天数}}) > 3'
+        },
+        {
+          title: '""',
+          des: '双引',
+          exa: '{{部门}} == "研发部"'
         },
       ];
+      $scope.stringText = [
+        '示例：{{部门}} == "研发部" && ({{事假天数}} + {{调休天数}}) > 3',
+        '说明：部门等于研发部并且事假天数加调休天数大于3',
+        '备注：{{}}内为属性名称，不能为属性id',
+        '4、字段必须是包含在表单内组件，字段用{{}}包裹。比较的值的类型必须与字段类型匹配。',
+        '1、>：大于。示例：{{请假天数}} > 3。',
+        '2、>=：大于等于。示例：{{请假天数}} >= 3。',
+        '3、==：等于。示例：{{部门}} == "研发部"。',
+        '4、<=：小于等于。示例：{{报销金额}} <=100。',
+        '5、<：小于。示例：{{报销金额}} < 100。',
+        '6、!=：不等于。示例：{{部门}} != "研发部"。',
+        '1、+：加。示例：({{事假天数}} + {{调休天数}}) > 3。',
+        '2、-：减（或负号）。示例：({{加班天数}} - {{调休天数}}) > 1。',
+        '3、*：乘。示例：({{单价}} * {{数量}}) > 100。',
+        '4、/：除。示例：({{金额}} / {{数量}}) < 10。',
+        '1、&&：并且。示例：{{部门}} == "研发部" && {{请假天数}} > 3。',
+        '2、||：或者。示例：{{部门}} == "研发部" || {{请假天数}} > 3。',
+        '3、!：取反。示例：!({{部门}} == "研发部" )。',
+        '4、( )：括号。示例：({{事假天数}} + {{调休天数}}) > 3。'
+      ]
+      // 操纵符点击
+      $scope.operationClick = (param) => {
+        if ($scope.expression.natureValue) {
+          $scope.expression.natureValue += ` ${param.title}`;
+        } else {
+          $scope.expression.natureValue = `${param.title}`;
+        }
+        document.getElementById("abc").focus();
+      }
+      // 获取字段点击事件
+      $scope.gridOptions.onRegisterApi = function (gridApi) {
+        //set gridApi on scope
+        $scope.gridApi = gridApi;
+        gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+          $scope.selectedProperty = row.entity;
+          if ($scope.expression.natureValue) {
+            $scope.expression.natureValue += ` {{${$scope.selectedProperty.name}}}`;
+          } else {
+            $scope.expression.natureValue = `{{${$scope.selectedProperty.name}}}`;
+          }
+          document.getElementById("abc").focus();
+        });
+      };
       $scope.selectdItem = '';
       $scope.check = function (gridOptions) {
-        // var params = {
-        //   sequenceCondition: "111",
-        //   params: [{ "id": "organizationName", "name": "部门" }, { "id": "vacationTime", "name": "请假时长" }, { "id": "vacationType", "name": "请假类型" }],
-        //   parserEnum: 'TOFLOWABLE',
-        // };
         if ($scope.expression.natureValue !== '' && $scope.expression.natureValue !== undefined){
           var params = {
             sequenceCondition: $scope.expression.natureValue,
